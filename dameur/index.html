@@ -882,7 +882,7 @@ function analyze(b, o) {
   if (gMax >= 30) brief.push(`Rafales jusqu'à ${Math.round(gMax)} km/h vers ${W(gAt)}.`);
   if (plan && plan.morning && !plan.morning.missing) {
     const mm = plan.morning.past ? plan.next : plan.morning;
-    if (mm && !mm.missing) brief.push(`Damage du matin${plan.morning.past ? ` ${plan.nextWord}` : ""} (${hh(mm.startK)}–${hh(mm.openK)}) : ${(mm.title.charAt(0).toLowerCase() + mm.title.slice(1)).replace(" : ", ", ")}.`);
+    if (mm && !mm.missing) brief.push(`Damage du matin${plan.morning.past ? ` ${plan.nextWord}` : plan.day !== today ? ` ${plan.dayWord}` : ""} (${hh(mm.startK)}–${hh(mm.openK)}) : ${(mm.title.charAt(0).toLowerCase() + mm.title.slice(1)).replace(" : ", ", ")}.`);
   }
   if (plan && plan.atOpen) brief.push(`À l'ouverture (${W(plan.atOpen.key)}) : ${deg0(plan.atOpen.T)}, neige ${plan.atOpen.wet === "normal" ? "normale" : plan.atOpen.wet === "sec" ? "sèche" : "humide"}, glisse ${plan.atOpen.speed.toLowerCase()}.`);
 
