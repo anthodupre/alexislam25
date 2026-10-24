@@ -7,3 +7,4 @@
 - The owner has no coding experience: explain steps one at a time, in plain words.
 - Push to `main` to publish (the site updates about a minute later).
 - DEV code: BURGER.
+- `/dameur/` : outil météo pour les dameurs des Glissades (un seul fichier, React + htm par CDN, données Open-Meteo + Environnement Canada). Tester avec le bouton DEV (BURGER) : scénarios d'hiver inventés.

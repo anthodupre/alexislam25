@@ -4,89 +4,155 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dameur">
 <meta name="theme-color" content="#0e0f13">
-<title>Outil dameur</title>
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<title>Dameur</title>
 <style>
   :root {
-    --bg: #0e0f13; --card: #171920; --card2: #1f222b; --line: #2a2e39;
-    --ink: #ecebe6; --ink2: #b4b2ab; --ink3: #7c7a74;
+    --bg: #0e0f13; --card: #171920; --card2: #1f222b; --card3: #282c37; --line: #2a2e39;
+    --ink: #ecebe6; --ink2: #b4b2ab; --ink3: #85837c;
     --temp: #f2b766; --snow: #9cc9ff; --rain: #4f86ff; --ice: #e07be0;
     --good: #3fb950; --warn: #d29922; --bad: #f85149;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); overflow-x: hidden; width: 100%; }
+  html { font-size: 16px; background: var(--bg); }
+  html.big { font-size: 18.5px; }
+  html.night { filter: grayscale(1) sepia(1) saturate(7) hue-rotate(-40deg) brightness(.7); }
+  html, body { margin: 0; color: var(--ink); overflow-x: hidden; width: 100%; }
   body {
+    background: var(--bg);
     font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
-    font-size: 16px; line-height: 1.35; touch-action: manipulation;
-    -webkit-text-size-adjust: 100%;
+    font-size: 1rem; line-height: 1.38; touch-action: manipulation;
+    -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
     padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
   }
-  #root { max-width: 560px; margin: 0 auto; padding: 0 16px 40px; }
+  #root { max-width: 560px; margin: 0 auto; padding: 0 16px 48px; }
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
   input, select { font-size: 16px; font-family: inherit; }
+  b { font-weight: 650; }
 
-  header { display: flex; align-items: center; gap: 12px; padding: 14px 0 10px; }
+  header { display: flex; align-items: center; gap: 10px; padding: 14px 0 6px; }
   header .t { flex: 1; min-width: 0; }
-  header h1 { margin: 0; font-size: 1.25rem; font-weight: 650; letter-spacing: .01em; }
+  header h1 { margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: .01em; }
   header .sub { color: var(--ink3); font-size: .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .iconbtn { width: 40px; height: 40px; border-radius: 12px; background: var(--card); display: grid; place-items: center; font-size: 1.15rem; }
+  .iconbtn { width: 44px; height: 44px; border-radius: 13px; background: var(--card); display: grid; place-items: center; font-size: 1.2rem; flex: none; }
+  .iconbtn.spin span { display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
 
   .card { background: var(--card); border-radius: 18px; padding: 16px; margin-top: 12px; }
-  .card h2 { margin: 0 0 10px; font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); }
+  .card h2 { margin: 0 0 10px; font-size: .75rem; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; color: var(--ink3); display: flex; justify-content: space-between; gap: 8px; }
   .row { display: flex; gap: 10px; }
   .row > * { flex: 1; min-width: 0; }
-  .big { font-size: 2.6rem; font-weight: 300; letter-spacing: -.02em; line-height: 1; }
+  .big { font-size: 3rem; font-weight: 300; letter-spacing: -.03em; line-height: 1; }
   .mid { font-size: 1.6rem; font-weight: 400; line-height: 1.1; }
   .muted { color: var(--ink2); }
   .faint { color: var(--ink3); font-size: .85rem; }
-  .tile { background: var(--card2); border-radius: 14px; padding: 12px; }
-  .tile .lab { color: var(--ink3); font-size: .78rem; margin-bottom: 4px; }
+  .tile { background: var(--card2); border-radius: 14px; padding: 11px 12px; }
+  .tile .lab { color: var(--ink3); font-size: .76rem; margin-bottom: 3px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; display: inline-block; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--card2); font-size: .82rem; white-space: nowrap; }
+  p { margin: 0; }
 
-  .advice { border: 1px solid var(--line); }
-  .advice .head { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 1.1rem; }
-  .advice p { margin: 8px 0 0; color: var(--ink2); }
-  .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--card2); font-size: .85rem; }
+  .plan { border: 1.5px solid var(--line); }
+  .plan .title { display: flex; align-items: flex-start; gap: 10px; font-weight: 700; font-size: 1.3rem; line-height: 1.2; }
+  .plan .title .dot { margin-top: .32em; width: 14px; height: 14px; }
+  .plan ul { margin: 8px 0 0; padding-left: 1.1em; color: var(--ink2); }
+  .plan li { margin-top: 4px; }
+
+  .tl { position: relative; margin-top: 14px; padding-top: 2px; }
+  .tl-row { display: flex; gap: 2px; }
+  .tl-open div { flex: 1; height: 5px; border-radius: 2px; }
+  .tl-lv { margin-top: 3px; }
+  .tl-lv div { flex: 1; height: 24px; border-radius: 4px; display: grid; place-items: center; }
+  .tl-pass { color: #fff; font-weight: 800; font-size: .8rem; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+  .tl-lab { position: relative; height: 16px; margin-top: 4px; font-size: .7rem; color: var(--ink3); }
+  .tl-lab span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+  .tl-lab span:first-child { transform: none; }
+  .sect { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .sect.past { opacity: .55; }
+  .sect-h { font-size: .78rem; color: var(--ink3); margin-bottom: 6px; font-weight: 650; letter-spacing: .02em; }
+  .plan .lead { color: var(--ink); margin-top: 2px; }
+  .plan .title.small { font-size: 1.08rem; }
+  .ev { display: flex; gap: 10px; padding: 6px 0; }
+  .ev .ic { width: 1.4em; text-align: center; flex: none; font-size: 1.1rem; line-height: 1.3; }
+  .ev b { display: block; }
+  .ev .s { color: var(--ink2); font-size: .9rem; }
 
   .alert { display: flex; gap: 10px; padding: 12px; border-radius: 14px; background: var(--card2); margin-top: 8px; }
   .alert:first-of-type { margin-top: 0; }
-  .alert .ic { font-size: 1.2rem; line-height: 1.2; }
+  .alert .ic { font-size: 1.25rem; line-height: 1.2; }
   .alert b { display: block; }
   .alert span { color: var(--ink2); font-size: .9rem; }
+  .alert details { margin-top: 6px; color: var(--ink2); font-size: .85rem; white-space: pre-line; }
 
-  .gauge { display: flex; gap: 3px; margin: 12px 0 6px; }
-  .gauge div { flex: 1; height: 10px; border-radius: 5px; background: var(--card2); }
-  .gauge-lab { display: flex; justify-content: space-between; font-size: .78rem; color: var(--ink3); }
+  .changes { border: 1.5px dashed var(--card3); }
+  .chg { display: flex; gap: 10px; padding: 6px 0; font-size: .95rem; }
+  .chg span:first-child { width: 1.4em; text-align: center; flex: none; }
+
+  .gbar { position: relative; display: flex; gap: 3px; margin: 14px 0 6px; }
+  .gbar div { flex: 1; height: 12px; border-radius: 6px; opacity: .35; }
+  .gbar div.on { opacity: 1; }
+  .gmark { position: absolute; top: -6px; width: 5px; height: 24px; border-radius: 3px; background: var(--ink); box-shadow: 0 0 0 2px var(--card); transform: translateX(-50%); }
+  .glab { display: flex; justify-content: space-between; font-size: .76rem; color: var(--ink3); }
+  .speed { display: flex; gap: 4px; margin-top: 8px; }
+  .speed div { flex: 1; text-align: center; padding: 6px 2px; border-radius: 9px; background: var(--card2); font-size: .74rem; color: var(--ink3); }
+  .speed div.on { background: var(--ink); color: var(--bg); font-weight: 700; }
+  details.why { margin-top: 10px; }
+  details.why summary { color: var(--ink3); font-size: .85rem; cursor: pointer; }
+  details.why div { display: flex; justify-content: space-between; font-size: .85rem; color: var(--ink2); padding: 3px 0; }
 
   .hours { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
-  .hour { border-radius: 10px; padding: 6px 2px; text-align: center; background: var(--card2); border: 2px solid transparent; }
-  .hour .h { font-size: .72rem; color: var(--ink2); }
-  .hour .v { font-size: .9rem; font-weight: 600; }
-  .hour .i { font-size: .8rem; height: 1.1em; }
+  .hour { position: relative; border-radius: 10px; padding: 7px 1px 6px; text-align: center; background: var(--card2); border: 2px solid transparent; min-height: 64px; }
+  .hour .h { font-size: .7rem; color: var(--ink2); }
+  .hour .v { font-size: .92rem; font-weight: 650; }
+  .hour .i { font-size: .74rem; height: 1.15em; line-height: 1.15em; }
   .hour.sel { border-color: var(--ink); }
+  .hour.open::before, .hour.morning::before { content: ""; position: absolute; left: 6px; right: 6px; top: 2px; height: 3px; border-radius: 2px; background: var(--ink2); }
+  .hour.morning::before { background: var(--snow); }
+  .hour .star { position: absolute; right: 4px; top: 4px; font-size: .7rem; font-weight: 800; }
 
-  .chart-read { display: flex; justify-content: space-between; gap: 8px; font-size: .9rem; min-height: 1.4em; margin-bottom: 4px; }
-  .chart-read b { font-weight: 600; }
-  svg text { font-family: inherit; }
-  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .78rem; color: var(--ink2); margin-top: 6px; }
+  .chart-read { display: flex; justify-content: space-between; gap: 8px; font-size: .88rem; min-height: 2.6em; margin-bottom: 2px; }
+  .chart-read b { font-weight: 650; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .76rem; color: var(--ink2); margin-top: 6px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
 
-  .ep { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); font-size: .92rem; }
+  .ep { padding: 9px 0; border-top: 1px solid var(--line); font-size: .92rem; }
   .ep:first-child { border-top: 0; }
+  .ep .top { display: flex; align-items: center; gap: 8px; }
+  .ep .ph { color: var(--ink2); font-size: .85rem; margin: 3px 0 0 2.05em; }
 
-  .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 10; display: flex; align-items: flex-end; justify-content: center; }
-  .sheet { background: var(--card); width: 100%; max-width: 560px; border-radius: 22px 22px 0 0; padding: 18px 16px calc(24px + env(safe-area-inset-bottom)); max-height: 85vh; overflow-y: auto; }
-  .sheet h3 { margin: 0 0 12px; }
+  table.mt { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  table.mt td, table.mt th { padding: 6px 4px; text-align: left; border-bottom: 1px solid var(--line); }
+  table.mt th { color: var(--ink3); font-weight: 600; font-size: .72rem; }
+  table.mt td.n { text-align: right; white-space: nowrap; }
+
+  .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 10; display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { background: var(--card); width: 100%; max-width: 560px; border-radius: 22px 22px 0 0; padding: 18px 16px calc(24px + env(safe-area-inset-bottom)); max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .sheet h3 { margin: 0 0 6px; font-size: 1.15rem; }
+  .sheet h4 { margin: 18px 0 4px; font-size: .75rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink3); }
   .btn { display: block; width: 100%; padding: 13px; border-radius: 12px; background: var(--card2); text-align: center; font-weight: 600; margin-top: 8px; }
   .btn.on { background: var(--ink); color: var(--bg); }
+  .btn.small { padding: 10px; font-size: .9rem; }
+  .toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px 14px; border-radius: 12px; background: var(--card2); margin-top: 8px; text-align: left; }
+  .sw { width: 46px; height: 28px; border-radius: 14px; background: var(--card3); position: relative; flex: none; transition: background .15s; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink2); transition: transform .15s; }
+  .sw.on { background: var(--good); }
+  .sw.on::after { transform: translateX(18px); background: #fff; }
   .field { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+  select.field { -webkit-appearance: none; appearance: none; }
   .devbar { background: #3a1d4a; color: #f3d2ff; border-radius: 12px; padding: 8px 12px; font-size: .85rem; margin-top: 8px; }
-  table.raw { width: 100%; border-collapse: collapse; font-size: .72rem; }
-  table.raw td, table.raw th { padding: 3px 2px; text-align: right; border-bottom: 1px solid var(--line); }
+  .warnbar { background: #3d2e10; color: #ffe2a8; border-radius: 12px; padding: 8px 12px; font-size: .85rem; margin-top: 8px; }
+  table.raw { width: 100%; border-collapse: collapse; font-size: .68rem; font-variant-numeric: tabular-nums; }
+  table.raw td, table.raw th { padding: 3px 2px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .toast { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 20; max-width: 528px; margin: 0 auto; background: var(--ink); color: var(--bg); border-radius: 14px; padding: 12px 14px; font-size: .92rem; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
   .loading { padding: 60px 0; text-align: center; color: var(--ink3); }
-  footer { color: var(--ink3); font-size: .75rem; margin-top: 18px; text-align: center; }
+  footer { color: var(--ink3); font-size: .75rem; margin-top: 18px; text-align: center; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -97,73 +163,253 @@
 <script src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
 <script>
 (function () {
+"use strict";
 const { useState, useEffect, useRef, useMemo } = React;
 const html = htm.bind(React.createElement);
 
-// ---------- Réglages ----------
-const SITE = { name: "Glissades des Pays-d'en-Haut", lat: 45.8847, lon: -74.1234 };
+// =====================================================================
+// Réglages
+// =====================================================================
+const SITE = { name: "Glissades des Pays-d'en-Haut", addr: "440 ch. Avila, Piedmont", lat: 45.8847, lon: -74.1234 };
+const STATIONS = [
+  { id: "7034900", name: "Mirabel", lat: 45.6804, lon: -74.0387 },
+  { id: "7045335", name: "Mont-Tremblant", lat: 46.0804, lon: -74.5561 },
+].map(s => ({ ...s, dist: km(SITE, s) }));
+const MODELS = [
+  { id: "gem_seamless", name: "Canada", src: "GEM" },
+  { id: "ecmwf_ifs025", name: "Europe", src: "ECMWF" },
+  { id: "gfs_seamless", name: "États-Unis", src: "GFS" },
+  { id: "icon_seamless", name: "Allemagne", src: "ICON" },
+];
+const TZ = "America/Toronto";
 const DEV_CODE = "BURGER";
-const AHEAD = 18;              // heures de prévision regardées pour le damage
+const AHEAD = 24;            // heures regardées vers l'avant
+const REFRESH_MIN = 5;       // rafraîchissement automatique
+const OM = "https://api.open-meteo.com/v1/forecast?";
+const GC = "https://api.weather.gc.ca/collections/";
 const HOURLY = ["temperature_2m", "apparent_temperature", "relative_humidity_2m", "dew_point_2m",
   "precipitation", "rain", "showers", "snowfall", "snow_depth", "weather_code",
-  "wind_speed_10m", "wind_gusts_10m", "wind_direction_10m", "precipitation_probability"];
+  "wind_speed_10m", "wind_gusts_10m", "wind_direction_10m", "precipitation_probability",
+  "shortwave_radiation", "cloud_cover"];
+const CURRENT = ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "weather_code",
+  "wind_speed_10m", "wind_gusts_10m", "wind_direction_10m"];
+const K = { cache: "dameur-cache", seen: "dameur-seen", prefs: "dameur-prefs", dev: "dameur-dev" };
 
-function apiUrl(withModel) {
-  const p = new URLSearchParams({
-    latitude: SITE.lat, longitude: SITE.lon, timezone: "America/Toronto",
-    past_days: 1, forecast_days: 3, hourly: HOURLY.join(","),
-    daily: "sunrise,sunset", current: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m",
-  });
-  if (withModel) p.set("models", "gem_seamless"); // Environnement Canada (HRDPS 2,5 km)
-  return "https://api.open-meteo.com/v1/forecast?" + p;
-}
-
-async function fetchWeather() {
-  for (const withModel of [true, false]) {
-    try {
-      const r = await fetch(apiUrl(withModel));
-      if (!r.ok) continue;
-      const d = await r.json();
-      if (d.hourly && d.hourly.temperature_2m.some(v => v != null)) return { ...d, model: withModel ? "Environnement Canada HRDPS" : "Open-Meteo (meilleur modèle)" };
-    } catch (e) { /* on essaie l'autre */ }
-  }
-  throw new Error("Météo indisponible");
-}
-
-// ---------- Petits outils ----------
+// =====================================================================
+// Petits outils
+// =====================================================================
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  json(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
 };
 const n0 = v => (v == null || isNaN(v) ? 0 : v);
-const fr = (v, d = 1) => (v == null || isNaN(v) ? "—" : (Math.round(v * 10 ** d) / 10 ** d).toFixed(d).replace(".", ",").replace("-", "−"));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const avg = a => (a.length ? a.reduce((s, v) => s + v, 0) / a.length : 0);
+const pad = n => String(n).padStart(2, "0");
+function fr(v, d = 1) {
+  if (v == null || isNaN(v)) return "—";
+  const r = Math.round(v * 10 ** d) / 10 ** d;
+  return (r === 0 ? 0 : r).toFixed(d).replace(".", ",").replace("-", "−");
+}
 const deg = v => fr(v, 1) + "°";
-const hh = t => t.slice(11, 13) + "h";
-const FREEZING = [56, 57, 66, 67];
+const deg0 = v => fr(v, 0) + "°";
+const sgn = v => (v > 0 ? "+" : "") + fr(v, 1);
+const hh = k => k.slice(11, 13) + "h";
+const dayOf = k => k.slice(0, 10);
+const addH = (k, n) => new Date(Date.parse(k.slice(0, 16) + ":00Z") + n * 3600e3).toISOString().slice(0, 16);
+const hoursBetween = (a, b) => (Date.parse(b.slice(0, 16) + ":00Z") - Date.parse(a.slice(0, 16) + ":00Z")) / 3600e3;
+const WD = ["dim.", "lun.", "mar.", "mer.", "jeu.", "ven.", "sam."];
+const PARTS = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+function localKey(ms) {
+  const p = {}; PARTS.formatToParts(new Date(ms)).forEach(x => { p[x.type] = x.value; });
+  return `${p.year}-${p.month}-${p.day}T${p.hour === "24" ? "00" : p.hour}:${p.minute}`;
+}
+function when(k, today) {
+  if (!k) return "—";
+  const d = dayOf(k), diff = Math.round((Date.parse(d) - Date.parse(today)) / 864e5);
+  if (diff === 0) return hh(k);
+  if (diff === -1) return "hier " + hh(k);
+  if (diff === 1) return "demain " + hh(k);
+  return WD[new Date(d + "T12:00Z").getUTCDay()] + " " + hh(k);
+}
+function km(a, b) {
+  const R = 6371, r = x => x * Math.PI / 180, dLat = r(b.lat - a.lat), dLon = r(b.lon - a.lon);
+  const s = Math.sin(dLat / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(s));
+}
 const DIRS = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"];
-const dir = d => DIRS[Math.round(n0(d) / 45) % 8];
+const ARROWS = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"]; // vers où souffle le vent
+const dirIdx = d => Math.round(n0(d) / 45) % 8;
 
-// Température humide (Stull 2011) — sert pour la fabrication de neige.
+// =====================================================================
+// Physique de la neige
+// =====================================================================
+// Température humide (Stull 2011) : la vraie température « ressentie » par la neige.
 function wetBulb(T, RH) {
-  RH = Math.max(5, Math.min(99, RH));
+  RH = clamp(RH, 5, 99);
   return T * Math.atan(0.151977 * Math.sqrt(RH + 8.313659)) + Math.atan(T + RH) - Math.atan(RH - 1.676331)
     + 0.00391838 * Math.pow(RH, 1.5) * Math.atan(0.023101 * RH) - 4.686035;
 }
+function rhFrom(T, Td) { const f = x => Math.exp(17.625 * x / (243.04 + x)); return clamp(100 * f(Td) / f(T), 1, 100); }
+// Densité de la neige fraîche selon la température (Hedstrom & Pomeroy) : froide = légère et épaisse.
+const rho = T => clamp(T <= 0 ? 67.92 + 51.25 * Math.exp(T / 2.59) : 119 + 40 * T, 60, 200);
+const densWord = r => (r < 80 ? "légère" : r < 110 ? "moyenne" : "lourde");
 
-// ---------- Scénarios DEV (code BURGER) ----------
-// Remplace la météo réelle par une situation d'hiver inventée, centrée sur l'heure actuelle.
-const SCENARIOS = {
-  live: "Météo réelle",
-  tempete: "Tempête en cours",
-  finfroid: "Neige finie, froid sec",
-  redoux: "Redoux + pluie, puis regel",
-  verglas: "Pluie verglaçante",
-  fabrication: "Froid sec, sans neige (fabrication)",
+// =====================================================================
+// Horaire des Glissades (horaire officiel 2026-2027, domainedespaysdenhaut.com)
+// =====================================================================
+const SEASON_START = "2026-11-14";   // estimé : la saison 2025 a ouvert le 15 novembre
+function officialHours(d) {
+  if (d >= "2026-05-01" && d < SEASON_START) return null;
+  const wd = new Date(d + "T12:00Z").getUTCDay(), mo = +d.slice(5, 7), md = d.slice(5);
+  const H = (open, close) => ({ open, close });
+  if (mo >= 5 && mo <= 9) return null;
+  if (mo >= 10) {
+    if (md <= "12-13") return wd === 1 || wd === 2 ? null : H(10, 16);
+    if (md <= "12-25") return H(10, 16);
+    if (md <= "12-30") return H(9, 20);
+    return H(9, 17);
+  }
+  if (md === "01-01") return H(9, 17);
+  if (md === "01-02") return H(9, 20);
+  if (md === "01-03") return H(9, 16);
+  if (md <= "02-26") return wd === 6 ? H(9, 20) : wd === 0 ? H(9, 16) : H(10, 16);
+  if (md <= "03-06") return H(9, 20);
+  if (md === "03-07") return H(9, 16);
+  if (md <= "03-21") return H(10, 16);
+  if (md <= "04-18") return wd >= 1 && wd <= 4 ? null : H(10, 16);
+  return null;
+}
+
+// =====================================================================
+// Codes météo
+// =====================================================================
+const FREEZING = [56, 57, 66, 67];
+function wxLabel(c, night) {
+  if (c == null) return ["", ""];
+  if (c === 0) return [night ? "🌙" : "☀️", "Dégagé"];
+  if (c <= 2) return [night ? "🌙" : "🌤️", "Peu nuageux"];
+  if (c === 3) return ["☁️", "Couvert"];
+  if (c === 45 || c === 48) return ["🌫️", "Brouillard"];
+  if (c >= 51 && c <= 55) return ["🌦️", "Bruine"];
+  if (c === 56 || c === 57) return ["🧊", "Bruine verglaçante"];
+  if (c >= 61 && c <= 65) return ["🌧️", "Pluie"];
+  if (c === 66 || c === 67) return ["🧊", "Pluie verglaçante"];
+  if (c >= 71 && c <= 77) return ["🌨️", "Neige"];
+  if (c >= 80 && c <= 82) return ["🌧️", "Averses"];
+  if (c === 85 || c === 86) return ["🌨️", "Averses de neige"];
+  if (c >= 95) return ["⛈️", "Orage"];
+  return ["", ""];
+}
+const TYPE = {
+  snow: { ic: "❄️", name: "neige", Name: "Neige", color: "var(--snow)" },
+  rain: { ic: "🌧️", name: "pluie", Name: "Pluie", color: "var(--rain)" },
+  mix: { ic: "🌨️", name: "neige et pluie", Name: "Neige et pluie", color: "var(--rain)" },
+  ice: { ic: "🧊", name: "pluie verglaçante", Name: "Pluie verglaçante", color: "var(--ice)" },
+};
+const LVL = {
+  good: { c: "var(--good)", rgb: "63,185,80", ic: "✓", name: "Bon" },
+  ok: { c: "var(--warn)", rgb: "210,153,34", ic: "~", name: "Moyen" },
+  warn: { c: "var(--warn)", rgb: "210,153,34", ic: "!", name: "Attention" },
+  bad: { c: "var(--bad)", rgb: "248,81,73", ic: "✕", name: "Mauvais" },
+};
+const RANK = { good: 0, ok: 1, bad: 2 };
+const falling = t => ({ snow: "Il neige encore", rain: "Il pleut encore", mix: "Il tombe encore de la neige et de la pluie", ice: "Il tombe encore de la pluie verglaçante" }[t]);
+
+// =====================================================================
+// Téléchargement des données
+// =====================================================================
+const qs = o => new URLSearchParams(o).toString();
+async function getJSON(url, ms = 15000) {
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctl.signal });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    if (j && j.error) throw new Error(j.reason || "erreur");
+    return j;
+  } finally { clearTimeout(t); }
+}
+
+async function fetchMain() {
+  const base = { latitude: SITE.lat, longitude: SITE.lon, timezone: TZ, past_days: 2, forecast_days: 3,
+    hourly: HOURLY.join(","), daily: "sunrise,sunset", current: CURRENT.join(",") };
+  try {
+    const d = await getJSON(OM + qs({ ...base, models: "gem_seamless" }));   // Environnement Canada, 2,5 km
+    if (d.hourly.temperature_2m.filter(v => v != null).length > 72) return { ...d, model: "gem" };
+  } catch (e) { /* on essaie le modèle par défaut */ }
+  return { ...(await getJSON(OM + qs(base))), model: "best" };
+}
+
+async function fetchExtras() {
+  const tasks = {
+    multi: getJSON(OM + qs({ latitude: SITE.lat, longitude: SITE.lon, timezone: TZ, forecast_days: 2,
+      hourly: "temperature_2m,precipitation,snowfall", models: MODELS.map(m => m.id).join(",") })).then(d => {
+      const out = {};
+      MODELS.forEach(m => {
+        const T = d.hourly["temperature_2m_" + m.id];
+        if (T && T.some(v => v != null)) out[m.id] = { time: d.hourly.time, T, P: d.hourly["precipitation_" + m.id], S: d.hourly["snowfall_" + m.id] };
+      });
+      return out;
+    }),
+    stModel: getJSON(OM + qs({ latitude: STATIONS.map(s => s.lat).join(","), longitude: STATIONS.map(s => s.lon).join(","),
+      timezone: TZ, past_days: 2, forecast_days: 1, hourly: "temperature_2m", models: "gem_seamless" }))
+      .then(d => (Array.isArray(d) ? d : [d]).map(x => ({ time: x.hourly.time, T: x.hourly.temperature_2m }))),
+    obs: Promise.all(STATIONS.map(s => getJSON(GC + "swob-realtime/items?" + qs({ f: "json", "msc_id-value": s.id,
+      sortby: "-date_tm-value", limit: 40, properties: "air_temp,rel_hum,date_tm-value" })).then(d => {
+      const seen = {};
+      return d.features.map(f => f.properties)
+        .filter(p => typeof p.air_temp === "number" && p["date_tm-value"].slice(14, 16) === "00")
+        .map(p => ({ key: localKey(Date.parse(p["date_tm-value"])).slice(0, 13) + ":00", T: p.air_temp, RH: p.rel_hum }))
+        .filter(o => !seen[o.key] && (seen[o.key] = true));
+    }).catch(() => null))),
+    alerts: getJSON(GC + "weather-alerts/items?" + qs({ f: "json", limit: 30,
+      bbox: [SITE.lon - .01, SITE.lat - .01, SITE.lon + .01, SITE.lat + .01].join(",") })).then(d => {
+      const now = Date.now(), seen = {};
+      return d.features.map(f => f.properties)
+        .filter(p => p.status_en !== "ended" && Date.parse(p.expiration_datetime) > now)
+        .filter(p => !seen[p.alert_name_fr] && (seen[p.alert_name_fr] = true))
+        .map(p => ({ name: p.alert_name_fr, type: p.alert_type, text: p.alert_text_fr || "", end: p.event_end_datetime }));
+    }),
+  };
+  const keys = Object.keys(tasks), res = await Promise.allSettled(Object.values(tasks));
+  const out = { ok: {} };
+  keys.forEach((k, i) => { out[k] = res[i].status === "fulfilled" ? res[i].value : null; out.ok[k] = res[i].status === "fulfilled"; });
+  return out;
+}
+
+async function fetchAll() {
+  const [main, extras] = await Promise.all([fetchMain(), fetchExtras()]);
+  return { main, ...extras, fetchedAt: Date.now() };
+}
+
+// =====================================================================
+// Scénarios DEV (code BURGER) : une météo d'hiver inventée, centrée sur maintenant
+// =====================================================================
+const SCEN = {
+  live: { label: "Météo réelle" },
+  tempete: { label: "Tempête en cours (grosse bordée)", T: [[-30, -3], [-10, -5], [0, -6], [8, -9], [24, -14]],
+    snow: [[-9, -1, 1.6], [0, 8, 1.1]], gust: [[-30, 15], [-2, 25], [3, 48], [12, 35], [24, 15]], rh: 75, base: 32,
+    spread: [1, .75, 1.35, .9], alerts: [{ name: "avertissement de neige abondante", type: "warning",
+      text: "Quoi : chutes de neige totalisant 20 à 30 cm.\n\nQuand : jusqu'à demain matin.\n\nRépercussions : routes et trottoirs difficiles." }] },
+  finfroid: { label: "Neige finie, froid sec", T: [[-30, -4], [-12, -6], [-4, -9], [6, -16], [24, -11]],
+    snow: [[-12, -4, 1.2]], gust: [[-30, 15], [0, 10], [24, 10]], rh: 62, base: 28 },
+  redoux: { label: "Redoux + pluie, puis regel", T: [[-30, -3], [-10, 0], [-5, 2.5], [2, 1.5], [8, -6], [24, -9]],
+    snow: [[-12, -6, 0.8]], rain: [[-5, 2, 1.6]], gust: [[-30, 10], [0, 20], [24, 25]], rh: 80, base: 35 },
+  verglas: { label: "Pluie verglaçante", T: [[-30, -6], [-5, -2], [0, -1], [5, -1.5], [24, -5]],
+    fz: [[-3, 4, 1.0]], gust: [[-30, 10], [24, 15]], rh: 85, base: 30,
+    alerts: [{ name: "avertissement de pluie verglaçante", type: "warning", text: "Quoi : pluie verglaçante, accumulation de 5 à 10 mm.\n\nQuand : cette nuit jusqu'à demain matin." }] },
+  printemps: { label: "Printemps : soleil et dégel", Tfn: hr => -2 + 6 * Math.sin((hr - 9) / 24 * 2 * Math.PI),
+    gust: [[-30, 12], [24, 12]], rh: 55, base: 60, sun: 650, cloud: 5 },
+  fabrication: { label: "Froid sec sans neige (fabrication)", T: [[-30, -8], [0, -10], [6, -14], [24, -9]],
+    gust: [[-30, 8], [24, 8]], rh: 58, base: 0 },
 };
 
-function simulate(d, kind, nowIdx) {
-  const h = d.hourly, N = h.time.length;
-  const interp = (pts) => Array.from({ length: N }, (_, i) => {
+function simulate(m, kind, nowIdx) {
+  const S = SCEN[kind], h = m.hourly, N = h.time.length;
+  const curve = pts => i => {
     const r = i - nowIdx;
     if (r <= pts[0][0]) return pts[0][1];
     for (let k = 1; k < pts.length; k++) if (r <= pts[k][0]) {
@@ -171,491 +417,1026 @@ function simulate(d, kind, nowIdx) {
       return va + (vb - va) * (r - a) / (b - a);
     }
     return pts[pts.length - 1][1];
-  });
-  const S = {
-    tempete:  { T: [[-30, -3], [-10, -5], [0, -6], [6, -9], [20, -13]], snow: [[-9, 4, 1.4], [5, 8, 0.5]], gust: [[-30, 15], [-2, 25], [3, 45], [12, 30], [20, 15]], base: 32 },
-    finfroid: { T: [[-30, -4], [-12, -6], [-4, -9], [6, -16], [20, -11]], snow: [[-12, -4, 1.2]], gust: [[-30, 15], [0, 10], [20, 10]], rh: 62, base: 28 },
-    redoux:   { T: [[-30, -3], [-10, 0], [-5, 2.5], [2, 1.5], [8, -6], [20, -9]], snow: [[-12, -6, 0.8]], rain: [[-5, 2, 1.6]], gust: [[-30, 10], [0, 20], [20, 25]], base: 35 },
-    verglas:  { T: [[-30, -6], [-5, -2], [0, -1], [5, -1.5], [20, -5]], fz: [[-3, 4, 1.0]], gust: [[-30, 10], [20, 15]], base: 30 },
-    fabrication: { T: [[-30, -8], [0, -10], [6, -14], [20, -9]], gust: [[-30, 8], [20, 8]], rh: 58, base: 0 },
-  }[kind];
-  const T = interp(S.T), gust = interp(S.gust);
-  const inRun = (runs, i) => (runs || []).find(([a, b]) => i - nowIdx >= a && i - nowIdx <= b);
-  const out = { ...h };
-  for (const k of HOURLY) out[k] = new Array(N).fill(0);
+  };
+  const Tf = S.Tfn ? (i => S.Tfn(+h.time[i].slice(11, 13))) : curve(S.T), Gf = curve(S.gust);
+  const run = (runs, i) => (runs || []).find(([a, b]) => i - nowIdx >= a && i - nowIdx <= b);
+  const out = { time: h.time };
+  HOURLY.forEach(k => { out[k] = new Array(N).fill(0); });
   let depth = S.base;
   for (let i = 0; i < N; i++) {
-    const s = inRun(S.snow, i), r = inRun(S.rain, i), f = inRun(S.fz, i);
-    const snow = s ? s[2] : 0, rain = r ? r[2] : 0, fz = f ? f[2] : 0;
-    depth += snow - rain * 0.6 - fz * 0.2;
-    const wet = snow || rain || fz;
-    out.temperature_2m[i] = Math.round(T[i] * 10) / 10;
-    out.relative_humidity_2m[i] = wet ? (rain || fz ? 97 : 92) : (S.rh || 75);
-    out.dew_point_2m[i] = T[i] - (100 - out.relative_humidity_2m[i]) / 5;
-    out.wind_gusts_10m[i] = Math.round(gust[i]);
-    out.wind_speed_10m[i] = Math.round(gust[i] * 0.6);
+    const t = Math.round(Tf(i) * 10) / 10, s = run(S.snow, i), r = run(S.rain, i), f = run(S.fz, i);
+    const snowCm = s ? s[2] : 0, rain = r ? r[2] : 0, fz = f ? f[2] : 0, sweV = snowCm * rho(t) / 100;
+    const wetH = snowCm || rain || fz, hr = +h.time[i].slice(11, 13);
+    depth += snowCm * .6 - rain * .5 - fz * .2 - (t > 0 ? t * .15 : 0);
+    out.temperature_2m[i] = t;
+    out.relative_humidity_2m[i] = wetH ? (rain || fz ? 97 : 92) : S.rh;
+    out.dew_point_2m[i] = t - (100 - out.relative_humidity_2m[i]) / 5;
+    out.wind_gusts_10m[i] = Math.round(Gf(i));
+    out.wind_speed_10m[i] = Math.round(Gf(i) * .6);
     out.wind_direction_10m[i] = 300;
-    out.apparent_temperature[i] = Math.round((T[i] - out.wind_speed_10m[i] / 6) * 10) / 10;
-    out.snowfall[i] = snow; out.rain[i] = rain + fz; out.showers[i] = 0;
-    out.precipitation[i] = snow / 0.7 + rain + fz;
+    out.apparent_temperature[i] = Math.round((t - out.wind_speed_10m[i] / 5) * 10) / 10;
+    out.snowfall[i] = sweV * .7;
+    out.rain[i] = rain + fz;
+    out.precipitation[i] = sweV + rain + fz;
     out.snow_depth[i] = Math.max(0, depth) / 100;
-    out.weather_code[i] = fz ? 67 : rain ? 63 : snow ? (snow > 1 ? 75 : 73) : 1;
-    out.precipitation_probability[i] = wet ? 90 : 5;
+    out.weather_code[i] = fz ? 67 : rain ? 63 : snowCm ? (snowCm > 1 ? 75 : 73) : 1;
+    out.precipitation_probability[i] = wetH ? 90 : 5;
+    out.cloud_cover[i] = wetH ? 100 : (S.cloud ?? 20);
+    out.shortwave_radiation[i] = hr >= 7 && hr <= 17 ? Math.round(Math.max(0, Math.sin(Math.PI * (hr - 7) / 10)) * (S.sun ?? 450) * (wetH ? .15 : 1)) : 0;
   }
-  const cur = { ...d.current, temperature_2m: out.temperature_2m[nowIdx], relative_humidity_2m: out.relative_humidity_2m[nowIdx],
-    apparent_temperature: out.apparent_temperature[nowIdx], weather_code: out.weather_code[nowIdx],
-    wind_speed_10m: out.wind_speed_10m[nowIdx], wind_gusts_10m: out.wind_gusts_10m[nowIdx] };
-  return { ...d, hourly: out, current: cur };
+  return { ...m, hourly: out, current: null };
 }
 
-// ---------- Analyse ----------
-function precipType(h, i) {
-  if (FREEZING.includes(h.weather_code[i]) || (n0(h.rain[i]) + n0(h.showers[i]) > 0 && h.temperature_2m[i] <= 0)) return "ice";
-  if (n0(h.snowfall[i]) > 0 && n0(h.rain[i]) + n0(h.showers[i]) < 0.1) return "snow";
-  if (n0(h.snowfall[i]) > 0) return "mix";
-  return "rain";
+function simulateBundle(b, kind, nowIdx) {
+  const main = simulate(b.main, kind, nowIdx), S = SCEN[kind], spread = S.spread || [1, .9, 1.15, 1];
+  const multi = {};
+  MODELS.forEach((M, j) => {
+    const k = spread[j], lag = j === 2 ? 2 : j === 1 ? -1 : 0;   // un modèle finit plus tard, un autre plus tôt
+    const at = (arr, i) => n0(arr[clamp(i - lag, 0, arr.length - 1)]);
+    multi[M.id] = { time: main.hourly.time,
+      T: main.hourly.temperature_2m.map((v, i) => v + (j - 1.5) * .6),
+      P: main.hourly.precipitation.map((v, i) => at(main.hourly.precipitation, i) * k),
+      S: main.hourly.snowfall.map((v, i) => at(main.hourly.snowfall, i) * k) };
+  });
+  return { main, multi, stModel: null, obs: null, alerts: S.alerts || [], ok: { sim: true }, fetchedAt: b.fetchedAt };
 }
 
-function analyze(d) {
-  const h = d.hourly, N = h.time.length;
-  const curT = d.current.time;
-  const nowHour = curT.slice(0, 13) + ":00";
-  const nowIdx = Math.max(0, h.time.indexOf(nowHour));
-  const today = curT.slice(0, 10);
-  const yday = h.time[0].slice(0, 10);
-  const y18 = h.time.indexOf(yday + "T18:00");
-  const mid = h.time.indexOf(today + "T00:00");
-  const sum = (key, a, b) => { let s = 0; for (let i = a; i <= b; i++) s += n0(h[key][i]); return s; };
-  const liquid = (a, b) => sum("rain", a, b) + sum("showers", a, b);
+// =====================================================================
+// Analyse : tout ce que la page affiche est calculé ici
+// =====================================================================
+function analyze(b, o) {
+  const m = b.main, h0 = m.hourly, time = h0.time, N = time.length;
+  const col = k => h0[k] || new Array(N).fill(null);
+  const fill = a => { let last = a.find(v => v != null) ?? 0; return a.map(v => (v == null ? last : (last = v))); };
+  const idxOf = {}; time.forEach((t, i) => { idxOf[t] = i; });
+  const nowKey = o.nowKey;
+  let nowIdx = idxOf[nowKey.slice(0, 13) + ":00"];
+  if (nowIdx == null) nowIdx = nowKey < time[0] ? 0 : N - 2;
+  nowIdx = clamp(nowIdx, 0, N - 2);
+  const frac = (+nowKey.slice(14, 16) || 0) / 60;
+  const today = dayOf(time[nowIdx]);
+  const W = k => when(k, today);
+  const y18 = idxOf[dayOf(addH(today + "T12:00", -24)) + "T18:00"] ?? 0;
+  const mid = idxOf[today + "T00:00"] ?? nowIdx;
+  const S = (f, a, z) => { let s = 0; for (let i = Math.max(0, a); i <= Math.min(N - 1, z); i++) s += f(i); return s; };
+  const custom = o.custom;
+  const hoursFor = d => (custom ? { open: custom.open, close: custom.close } : officialHours(d));
 
-  // Une valeur horaire à T = ce qui est tombé entre T-1h et T.
-  const snowEve = sum("snowfall", y18 + 1, mid);
-  const snowToday = sum("snowfall", mid + 1, nowIdx);
-  const rainSince = liquid(y18 + 1, nowIdx);
+  // ---- Température corrigée avec les stations réelles ----
+  const T0 = fill(col("temperature_2m")), Td0 = fill(col("dew_point_2m")), RH0 = fill(col("relative_humidity_2m")), app0 = fill(col("apparent_temperature"));
+  const corr = new Array(N).fill(0);
+  let corrInfo = null;
+  if (b.obs && b.stModel) {
+    const byKey = {};
+    STATIONS.forEach((s, si) => {
+      const mod = b.stModel[si], ob = b.obs[si];
+      if (!mod || !ob) return;
+      const mv = {}; mod.time.forEach((t, k) => { mv[t] = mod.T[k]; });
+      ob.forEach(x => {
+        if (mv[x.key] == null) return;
+        (byKey[x.key] = byKey[x.key] || []).push({ bias: x.T - mv[x.key], w: 1 / s.dist, name: s.name, dist: s.dist, obs: x.T, model: mv[x.key] });
+      });
+    });
+    const biasAt = k => { const a = byKey[k]; if (!a) return null; let sw = 0, s = 0; a.forEach(x => { sw += x.w; s += x.w * x.bias; }); return clamp(s / sw, -5, 5); };
+    const keys = Object.keys(byKey).filter(k => idxOf[k] != null).sort();
+    if (keys.length) {
+      const lastKey = keys[keys.length - 1], i0 = idxOf[lastKey], b0 = biasAt(lastKey);
+      for (let i = 0; i < N; i++) {
+        if (i <= i0) {
+          const v = [-1, 0, 1].map(d => time[i + d] && biasAt(time[i + d])).filter(x => x != null);
+          corr[i] = v.length ? avg(v) : 0;
+        } else corr[i] = b0 * Math.exp(-(i - i0) / 6);   // l'écart s'estompe sur ~6 h
+      }
+      corrInfo = { b0, key: lastKey, now: corr[nowIdx], stations: byKey[lastKey] };
+    }
+  }
+  const T = T0.map((v, i) => v + corr[i]);
+  const Td = Td0.map((v, i) => Math.min(v, T[i]));
+  const RH = corrInfo ? T.map((v, i) => Math.round(rhFrom(v, Td[i]))) : RH0;
+  const app = app0.map((v, i) => v + corr[i]);
+  const Tw = T.map((v, i) => wetBulb(v, RH[i]));
+  const gust = fill(col("wind_gusts_10m")), wind = fill(col("wind_speed_10m")), wdir = fill(col("wind_direction_10m"));
+  const rad = col("shortwave_radiation").map(n0), codes = col("weather_code");
 
-  // Épisodes de précipitation (on tolère 1 h sèche au milieu)
-  const wet = i => n0(h.precipitation[i]) >= 0.1;
+  // ---- Précipitations ----
+  const liq = i => n0(h0.rain[i]) + n0(h0.showers && h0.showers[i]);
+  const swe = i => n0(h0.snowfall[i]) / 0.7;
+  const cm = time.map((_, i) => swe(i) * 100 / rho(T[i]));
+  const wet = i => n0(h0.precipitation[i]) >= 0.1 || swe(i) >= 0.1;
+  const ptype = time.map((_, i) => {
+    if (!wet(i)) return null;
+    if (FREEZING.includes(codes[i]) || (liq(i) >= 0.1 && swe(i) < 0.05 && T0[i] <= 0)) return "ice";
+    if (swe(i) >= 0.05 && liq(i) < 0.1) return "snow";
+    if (swe(i) >= 0.05) return "mix";
+    return "rain";
+  });
+
+  // ---- Jour / nuit ----
+  const sunOf = {};
+  if (m.daily) m.daily.time.forEach((d, j) => { sunOf[d] = { rise: m.daily.sunrise[j], set: m.daily.sunset[j] }; });
+  const isNight = time.map(t => { const s = sunOf[dayOf(t)]; return s ? (t < s.rise || t >= s.set) : false; });
+
+  // ---- Maintenant ----
+  const lerp = arr => arr[nowIdx] * (1 - frac) + arr[nowIdx + 1] * frac;
+  const curFresh = m.current && Math.abs(hoursBetween(m.current.time, nowKey)) < 0.75;
+  const c = m.current;
+  const curT = curFresh ? c.temperature_2m + corr[nowIdx] : lerp(T);
+  const curTd = Math.min(lerp(Td), curT);
+  const cur = {
+    T: curT,
+    RH: curFresh && !corrInfo ? c.relative_humidity_2m : Math.round(corrInfo ? rhFrom(curT, curTd) : lerp(RH)),
+    app: curFresh ? c.apparent_temperature + corr[nowIdx] : lerp(app),
+    code: curFresh ? c.weather_code : codes[nowIdx + 1],
+    wind: curFresh ? c.wind_speed_10m : lerp(wind),
+    gust: curFresh ? c.wind_gusts_10m : lerp(gust),
+    dir: curFresh && c.wind_direction_10m != null ? c.wind_direction_10m : wdir[nowIdx],
+    night: isNight[nowIdx],
+  };
+  cur.Tw = wetBulb(cur.T, cur.RH);
+  const depth = n0(col("snow_depth")[nowIdx]) * 100;
+
+  // ---- Neige tombée depuis 18h hier ----
+  const partial = cm[nowIdx + 1] * frac, partialRain = liq(nowIdx + 1) * frac;
+  const snowEve = S(i => cm[i], y18 + 1, mid);
+  const snowToday = S(i => cm[i], mid + 1, nowIdx) + partial;
+  const rainSince = S(liq, y18 + 1, nowIdx) + partialRain;
+  const sweSince = S(swe, y18 + 1, nowIdx) + swe(nowIdx + 1) * frac;
+  const rhoSince = (() => { let w = 0, s = 0; for (let i = y18 + 1; i <= nowIdx; i++) if (swe(i) > 0) { w += swe(i); s += swe(i) * rho(T[i]); } return w ? s / w : null; })();
+
+  // ---- Épisodes (neige / pluie), avec leurs phases ----
   const eps = [];
-  let i = y18 + 1;
-  while (i < N) {
+  for (let i = 1; i < N;) {
     if (!wet(i)) { i++; continue; }
-    let a = i, b = i;
-    while (b + 1 < N && (wet(b + 1) || (b + 2 < N && wet(b + 2)))) b += wet(b + 1) ? 1 : 2;
-    const types = new Set(); let peak = 0;
-    for (let k = a; k <= b; k++) if (wet(k)) { types.add(precipType(h, k)); peak = Math.max(peak, n0(h.snowfall[k])); }
-    const type = types.has("ice") ? "ice" : types.size > 1 || types.has("mix") ? "mix" : [...types][0];
-    eps.push({ a, b, type, snow: sum("snowfall", a, b), rain: liquid(a, b), peak,
-      start: h.time[a - 1] || h.time[a], end: h.time[b], openEnd: b >= N - 1,
-      status: b <= nowIdx ? "done" : a <= nowIdx + 1 ? "now" : "next",
-      left: sum("snowfall", Math.max(a, nowIdx + 1), b) });
-    i = b + 1;
+    const a = i; let z = i;
+    while (z + 1 < N && (wet(z + 1) || (z + 2 < N && wet(z + 2)))) z += wet(z + 1) ? 1 : 2;
+    i = z + 1;
+    if (z <= y18) continue;
+    const phases = [];
+    for (let k = a; k <= z; k++) {
+      if (!wet(k)) continue;
+      const last = phases[phases.length - 1];
+      if (last && last.type === ptype[k]) { last.z = k; last.snow += cm[k]; last.rain += liq(k); }
+      else phases.push({ type: ptype[k], a: k, z: k, snow: cm[k], rain: liq(k) });
+    }
+    const types = new Set(phases.map(p => p.type));
+    let rw = 0, rs = 0;
+    for (let k = a; k <= z; k++) if (swe(k) > 0) { rw += swe(k); rs += swe(k) * rho(T[k]); }
+    eps.push({
+      a, z, phases,
+      type: types.has("ice") ? "ice" : types.size > 1 ? "mix" : [...types][0],
+      snow: S(k => cm[k], a, z), rain: S(liq, a, z),
+      startKey: time[a - 1], endKey: time[z], openEnd: z >= N - 1,
+      status: z <= nowIdx ? "done" : a <= nowIdx + 1 ? "now" : "next",
+      left: S(k => cm[k], nowIdx + 1, z) - (a <= nowIdx + 1 ? partial : 0),
+      leftRain: S(liq, Math.max(a, nowIdx + 1), z),
+      rate: Math.max(0, ...[nowIdx + 1, nowIdx + 2].filter(k => k <= z).map(k => cm[k])),
+      dens: rw ? densWord(rs / rw) : null,
+    });
   }
   const active = eps.find(e => e.status === "now");
-  const last = [...eps].reverse().find(e => e.status === "done");
-  const next = eps.find(e => e.status === "next" && e.a - nowIdx <= 24);
+  const lastDone = [...eps].reverse().find(e => e.status === "done");
+  const next = eps.find(e => e.status === "next" && e.a - nowIdx <= 36);
 
-  // Humide / sec / normal (état de la neige maintenant)
-  const T = d.current.temperature_2m, RH = d.current.relative_humidity_2m;
-  const rain6 = liquid(Math.max(0, nowIdx - 5), nowIdx), rain12 = liquid(Math.max(0, nowIdx - 11), nowIdx);
-  let maxT12 = -99; for (let k = Math.max(0, nowIdx - 11); k <= nowIdx; k++) maxT12 = Math.max(maxT12, h.temperature_2m[k]);
-  let humid, humidWhy;
-  if (rain6 >= 0.2 || T > 0 || (T > -2 && RH >= 90)) {
-    humid = "humide";
-    humidWhy = rain6 >= 0.2 ? `Il a plu ${fr(rain6)} mm dans les 6 dernières heures.` : T > 0 ? `Il fait ${deg(T)}, au-dessus du point de congélation.` : `Près de 0° (${deg(T)}) avec ${RH}% d'humidité.`;
-  } else if ((T <= -8 && RH < 85 && rain12 < 0.2 && maxT12 < -2) || T <= -14) {
-    humid = "sec";
-    humidWhy = `Froid (${deg(T)}) et air sec (${RH}%) : la neige ne colle pas.`;
-  } else {
-    humid = "normal";
-    humidWhy = `${deg(T)} et ${RH}% d'humidité : neige ni mouillée, ni poudreuse.`;
-  }
-  const noSnow = n0(h.snow_depth[nowIdx]) * 100 < 1 && snowEve + snowToday < 0.5;
-  if (noSnow) { humid = "aucune"; humidWhy = "Pas de neige au sol pour l'instant."; }
-  const humidScore = Math.max(0, Math.min(1, (T + 14) / 15 + (RH - 75) / 100 + (rain6 > 0.2 ? .4 : 0)));
-
-  // Note de damage, heure par heure (prochaines 18 h)
-  const hours = [];
-  for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + AHEAD); k++) {
-    const t = h.temperature_2m[k], p = n0(h.precipitation[k]), g = n0(h.wind_gusts_10m[k]);
-    const trend = (h.temperature_2m[Math.min(N - 1, k + 3)] ?? t) - t;
-    const why = []; let lvl = "good";
-    const pt = p >= 0.1 ? precipType(h, k) : null;
-    if (pt === "ice") { lvl = "bad"; why.push("pluie verglaçante"); }
-    else if (pt === "rain" || pt === "mix") { lvl = "bad"; why.push("pluie"); }
-    else if (pt === "snow" && n0(h.snowfall[k]) >= 0.5) { lvl = "bad"; why.push(`neige forte ${fr(h.snowfall[k])} cm/h`); }
-    else if (pt === "snow") { lvl = "ok"; why.push("neige faible"); }
-    if (t > 1) { lvl = "bad"; why.push(`trop doux ${deg(t)}`); }
-    else if (t > -2) { if (lvl === "good") lvl = "ok"; why.push(`près de 0° (${deg(t)})`); }
-    else if (t < -18) { if (lvl === "good") lvl = "ok"; why.push(`très froid ${deg(t)}`); }
-    if (g >= 40) { lvl = "bad"; why.push(`rafales ${Math.round(g)} km/h`); }
-    else if (g >= 30) { if (lvl === "good") lvl = "ok"; why.push(`rafales ${Math.round(g)} km/h`); }
-    if (lvl === "good" && trend > 2) { lvl = "ok"; why.push("ça se réchauffe"); }
-    if (lvl === "good") why.push(trend < -0.5 ? `${deg(t)}, ça refroidit : la neige va prendre` : `${deg(t)}, sec`);
-    hours.push({ i: k, t: h.time[k], temp: t, lvl, why, pt });
-  }
-  const runs = lvl => {
-    let best = null, cur = null;
-    hours.forEach((x, j) => {
-      if (x.lvl === lvl) { cur = cur ? { ...cur, b: j } : { a: j, b: j }; if (!best || cur.b - cur.a > best.b - best.a) best = cur; }
-      else cur = null;
+  // ---- Fiabilité : 4 modèles ----
+  let models = null, conf = null;
+  if (b.multi && Object.keys(b.multi).length) {
+    models = MODELS.filter(M => b.multi[M.id]).map(M => {
+      const d = b.multi[M.id];
+      let snow = 0, rain = 0, minT = 99, startKey = null, endKey = null, dry = 0, done = false, ongoing = false;
+      d.time.forEach((t, j) => {
+        const ii = idxOf[t];
+        if (ii == null || ii <= nowIdx || ii > nowIdx + AHEAD) return;
+        const tt = n0(d.T[j]), p = n0(d.P[j]), sn = n0(d.S[j]) / 0.7 * 100 / rho(tt);
+        snow += sn; rain += Math.max(0, p - n0(d.S[j]) / 0.7); minT = Math.min(minT, tt);
+        const w = p >= 0.1;
+        if (done) return;
+        if (w) { if (!startKey) { startKey = d.time[j - 1] || t; ongoing = ii === nowIdx + 1; } endKey = t; dry = 0; }
+        else if (startKey && ++dry >= 2) done = true;
+      });
+      return { ...M, snow, rain, minT, startKey, endKey, ongoing };
     });
-    return best;
-  };
-  const good = runs("good"), okRun = runs("ok");
-
-  let advice, adviceLvl;
-  const win = r => `entre ${hh(h.time[hours[r.a].i - 1])} et ${hh(hours[r.b].t)}`;
-  if (noSnow && !(active && active.type === "snow") && !(next && next.snow >= 1)) {
-    adviceLvl = "ok";
-    advice = { title: "Pas de neige au sol", text: "Rien à damer pour l'instant. Regarde la case Fabrication pour savoir si on peut faire de la neige." };
-  } else if (active && active.type !== "snow") {
-    adviceLvl = "bad";
-    advice = { title: active.type === "ice" ? "Verglas en cours" : "Pluie en cours", text: `Évite de damer pendant la pluie. ${good ? `Meilleur moment : ${win(good)}.` : "Pas de bonne fenêtre dans les 18 prochaines heures."}` };
-  } else if (active) {
-    adviceLvl = "warn";
-    advice = { title: "Il neige encore", text: `Encore environ ${fr(active.left)} cm d'ici ${active.openEnd ? "plus tard" : hh(active.end)}. ${good ? `Dame après la neige, ${win(good)}.` : okRun ? `Fenêtre correcte ${win(okRun)}.` : "Pas de bonne fenêtre dans les 18 prochaines heures."}` };
-  } else if (good) {
-    adviceLvl = "good";
-    advice = { title: good.a === 0 ? "Bon moment pour damer" : "Bonne fenêtre plus tard", text: `Meilleure fenêtre : ${win(good)} (${good.b - good.a + 1} h).` };
-  } else if (okRun) {
-    adviceLvl = "warn";
-    advice = { title: "Conditions moyennes", text: `Fenêtre correcte ${win(okRun)}. Voir les heures plus bas.` };
-  } else {
-    adviceLvl = "bad";
-    advice = { title: "Mauvaises conditions", text: "Aucune bonne fenêtre dans les 18 prochaines heures." };
+    const v = models.map(x => x.snow), mx = Math.max(...v), mn = Math.min(...v), mean = avg(v);
+    if (mx < 1) conf = { lvl: "good", name: "élevée", text: `Les ${models.length} modèles : pas de neige d'ici 24 h.` };
+    else if (mn >= 1 && mx - mn <= Math.max(3, mean * .5)) conf = { lvl: "good", name: "élevée", text: `Les ${models.length} modèles sont d'accord : ${fr(mn, 0)} à ${fr(mx, 0)} cm.` };
+    else if (mx - mn <= Math.max(6, mean)) conf = { lvl: "ok", name: "moyenne", text: `Les modèles donnent entre ${fr(mn, 0)} et ${fr(mx, 0)} cm.` };
+    else conf = { lvl: "bad", name: "faible", text: `Les modèles ne s'entendent pas : entre ${fr(mn, 0)} et ${fr(mx, 0)} cm.` };
+    conf.min = mn; conf.max = mx;
   }
 
-  // Alertes que l'équipe ne voit pas forcément d'un coup d'œil
+  // ---- Humide / sec / normal ----
+  function wetIdx(i, Tv = T[i], RHv = RH[i]) {
+    const tw = wetBulb(Tv, RHv), why = [];
+    let s = 50 + 6 * (tw + 4);
+    why.push([`Température humide ${deg(tw)}`, 6 * (tw + 4)]);
+    const r6 = S(liq, i - 5, i), r24 = S(liq, i - 23, i - 6);
+    if (r6 >= 0.2) { const v = Math.min(25, r6 * 8); s += v; why.push([`Pluie ${fr(r6)} mm (6 dernières h)`, v]); }
+    if (r24 >= 0.5 && Tv > -4) { const v = Math.min(10, r24 * 2); s += v; why.push([`Pluie ${fr(r24)} mm plus tôt`, v]); }
+    if (rad[i] >= 250 && Tv > -6) { const v = Math.min(15, (rad[i] - 250) / 30); s += v; why.push([`Soleil fort`, v]); }
+    let warm = 0; for (let k = i - 5; k <= i; k++) if (k >= 0 && T[k] > 0.5) warm++;
+    if (warm) { s += warm * 3; why.push([`${warm} h au-dessus de 0°`, warm * 3]); }
+    const fresh = S(k => cm[k], i - 11, i);
+    if (fresh >= 2 && Tv < -6) { s -= 10; why.push([`Neige fraîche légère (${fr(fresh)} cm)`, -10]); }
+    s = clamp(s, 0, 100);
+    return { s, lvl: s > 65 ? "humide" : s < 35 ? "sec" : "normal", why };
+  }
+
+  // ---- Surface probable sur les pistes + vitesse des tubes ----
+  function surface(i, Tv = T[i]) {
+    const fresh = S(k => cm[k], i - 11, i), wi = wetIdx(i, Tv);
+    const ice = S(k => (ptype[k] === "ice" ? 1 : 0), i - 23, i) > 0;
+    let thaw = null; for (let k = i; k >= Math.max(0, i - 47); k--) if (T[k] > 0.5 || (liq(k) >= 0.2 && T0[k] > 0)) { thaw = k; break; }
+    const frozen = thaw != null ? S(k => (T[k] < -1 ? 1 : 0), thaw + 1, i) : 0;
+    const raining = ptype[i] === "rain" || ptype[i] === "mix";
+    if (ice) return { name: "Glacée (verglas)", speed: 3, tip: "Couloirs glacés : fraiser, et surveiller la vitesse dans la zone d'arrêt." };
+    if (raining || Tv > 0.5 || wi.s > 78) return { name: "Mouillée et molle", speed: 0, tip: "Laisse égoutter : compacter de la neige détrempée la rend dure comme du béton au regel." };
+    if (fresh >= 10) return { name: `Neige fraîche épaisse (${fr(fresh, 0)} cm)`, speed: 0, tip: "Beaucoup de neige à compacter : prévois plusieurs passes." };
+    if (fresh >= 3) return { name: `Neige fraîche (${fr(fresh, 0)} cm)`, speed: 1, tip: "Une passe pour compacter la neige fraîche." };
+    if (thaw != null && frozen >= 3) return { name: `Croûte regelée (dégel ${W(time[thaw])})`, speed: 2, tip: "Passe la fraise pour casser la croûte, sinon les tubes vont très vite." };
+    if (wetBulb(Tv, RH[i]) <= -10) return { name: "Dure et sèche", speed: 2, tip: "Neige froide : glisse rapide, surveille le bas des pistes." };
+    return { name: "Compacte", speed: 1, tip: "Surface normale." };
+  }
+  const SPEEDS = ["Lente", "Normale", "Rapide", "Très rapide"];
+
+  // ---- Horaire : ouvert maintenant ? prochaine ouverture ? ----
+  const opening = after => {
+    for (let dd = 0; dd < 6; dd++) {
+      const d = dayOf(addH(dayOf(after) + "T12:00", 24 * dd)), hs = hoursFor(d);
+      if (!hs) continue;
+      const k = d + "T" + pad(hs.open) + ":00";
+      if (k > after) return k;
+    }
+    return null;
+  };
+  const closing = d => { const hs = hoursFor(d); return hs ? d + "T" + pad(hs.close) + ":00" : null; };
+  const openNow = (() => { const hs = hoursFor(today), hr = +nowKey.slice(11, 13); return !!hs && hr >= hs.open && hr < hs.close; })();
+  const soon = !!opening(nowKey);
+  // Hors saison, on garde un horaire type (10h-16h) pour que le plan reste utile.
+  const planHours = d => hoursFor(d) || (soon ? null : { open: 10, close: 16, typical: true });
+  const isPlanOpen = k => { const hs = planHours(dayOf(k)), hr = +k.slice(11, 13); return !!hs && hr >= hs.open && hr < hs.close; };
+  const lead = clamp(o.lead || 3, 1, 6);
+  const range = (a, z) => { const r = []; for (let k = a; k <= z; k++) r.push(k); return r; };
+
+  // ---- Conditions de damage, heure par heure (l'heure k couvre time[k-1] → time[k]) ----
+  function evalHour(k) {
+    const key = time[k - 1], t = (T[k - 1] + T[k]) / 2, s = cm[k], l = liq(k), g = gust[k], pt = ptype[k];
+    const trend = T[Math.min(N - 1, k + 3)] - T[k];
+    let lvl = "good"; const why = [];
+    const worse = v => { if (RANK[v] > RANK[lvl]) lvl = v; };
+    if (pt === "ice") { worse("bad"); why.push("pluie verglaçante"); }
+    else if (pt === "rain") { worse("bad"); why.push(`pluie ${fr(l)} mm`); }
+    else if (pt === "mix") { worse("bad"); why.push("neige et pluie"); }
+    else if (pt === "snow" && s >= 1.5) { worse("bad"); why.push(`forte neige ${fr(s)} cm/h`); }
+    else if (pt === "snow") { worse("ok"); why.push(`neige ${fr(s)} cm/h`); }
+    if (t >= 3) { worse("bad"); why.push(`${deg(t)} : neige détrempée`); }
+    else if (t > 0.5) { worse("ok"); why.push(`${deg(t)} : neige molle`); }
+    if (t <= -25) { worse("bad"); why.push(`${deg(t)} : trop froid`); }
+    else if (t <= -18) { worse("ok"); why.push(`${deg(t)} : la neige se lie mal`); }
+    if (g >= 45) { worse("bad"); why.push(`rafales ${Math.round(g)} km/h (poudrerie)`); }
+    else if (g >= 30) { worse("ok"); why.push(`rafales ${Math.round(g)} km/h`); }
+    const thawed = [k - 3, k - 2, k - 1].some(j => j >= 0 && (T[j] > 0.5 || (liq(j) >= 0.2 && T0[j] > 0)));
+    if (lvl === "good" && thawed && t > -2) { worse("ok"); why.push("neige encore mouillée : attends le regel"); }
+    if (lvl === "good") why.push(trend <= -0.5 ? `${deg(t)}, ça refroidit : la neige va bien prendre` : trend >= 1.5 ? `${deg(t)}, ça se réchauffe ensuite` : `${deg(t)}, temps sec`);
+    return { k, key, endKey: time[k], t, s, l, g, pt, lvl, why, trend, open: isPlanOpen(key) };
+  }
+  const cells = [];
+  for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + AHEAD); k++) cells.push(evalHour(k));
+
+  let wasWet = cur.T > 0.5, freezeAt = null;
+  for (let k = Math.max(0, nowIdx - 23); k <= Math.min(N - 1, nowIdx + 18); k++) {
+    if (T[k] > 0.5 || (liq(k) > 0.2 && T0[k] > 0)) wasWet = true;
+    if (k > nowIdx && wasWet && T[k] <= -2) { freezeAt = time[k]; break; }
+  }
+
+  // ---- Plan de la journée : damage du matin, puis retouches pendant l'ouverture ----
+  function morningOf(d) {
+    const hs = planHours(d);
+    if (!hs) return null;
+    const openK = d + "T" + pad(hs.open) + ":00", startK = addH(openK, -lead);
+    const iO = idxOf[openK], iM = idxOf[startK];
+    if (iO == null || iM == null || iO >= N - 1) return { d, openK, startK, missing: true };
+    const iS = idxOf[addH(d + "T18:00", -24)] ?? 0;
+    const hrs = range(iM + 1, iO).map(evalHour);
+    const inProgress = nowKey >= startK && nowKey < openK;
+    const before = S(k => cm[k], iS + 1, iM), during = S(k => cm[k], Math.max(iM, inProgress ? nowIdx : iM) + 1, iO), rainB = S(liq, iS + 1, iM);
+    const sf = surface(iM), tA = T[iM], tZ = T[iO];
+    const gMax = Math.max(0, ...hrs.map(x => x.g));
+    const wetH = hrs.filter(x => x.pt === "rain" || x.pt === "mix" || x.pt === "ice");
+    const lines = []; let lvl = "good", title;
+    if (wetH.length) {
+      lvl = "bad"; title = wetH.some(x => x.pt === "ice") ? "Verglas pendant le damage" : "Pluie pendant le damage";
+      lines.push("Neige lourde et détrempée : ne la compacte pas, attends qu'elle égoutte, puis fraise après le regel.");
+    } else if (during >= 2) {
+      lvl = "warn"; title = inProgress ? `Il neige pendant le damage (+${fr(during, 0)} cm d'ici ${hh(openK)})` : `Il neigera pendant le damage (+${fr(during, 0)} cm)`;
+      lines.push(`Une première passe dès ${hh(startK)}, puis une dernière juste avant ${hh(openK)}.`);
+    } else if (sf.speed === 3) { lvl = "bad"; title = "Couloirs glacés"; lines.push(sf.tip); }
+    else if (before >= 10) { lvl = "warn"; title = `${fr(before, 0)} cm de neige à compacter`; lines.push("Grosse quantité : prévois plusieurs passes et commence tôt."); }
+    else if (before >= 3) { title = `${fr(before, 0)} cm de neige fraîche à compacter`; lines.push("Une passe pour compacter : la neige va bien tenir."); }
+    else if (/Croûte/.test(sf.name)) { lvl = "warn"; title = "Croûte regelée : passe la fraise"; lines.push(sf.tip); }
+    else if (tA > 0.5 || sf.speed === 0) { lvl = "warn"; title = "Neige molle ce matin"; lines.push("Évite de compacter la neige détrempée : elle durcira en glace au prochain regel."); }
+    else { title = "Damage de routine"; lines.push("Pas de neige fraîche ni de croûte à prévoir."); }
+    lines.push(`${deg0(tA)} à ${hh(startK)} → ${deg0(tZ)} à ${hh(openK)}${tZ > tA + 1.5 ? ", ça se réchauffe" : tZ < tA - 1 ? ", ça refroidit" : ""}.`);
+    if (before >= 0.5 && before < 3) lines.push(`${fr(before)} cm tombés depuis 18h la veille.`);
+    if (rainB >= 0.5) lines.push(`${fr(rainB)} mm de pluie depuis 18h la veille.`);
+    if (gMax >= 30) { if (lvl === "good") lvl = "warn"; lines.push(`Rafales jusqu'à ${Math.round(gMax)} km/h : la neige poudreuse remplit les couloirs.`); }
+    if (Math.min(tA, tZ) <= -18) lines.push("Très froid : la neige se lie mal, laisse-la reposer entre les passes.");
+    return { d, openK, startK, title, lvl, lines, before, during, past: nowKey >= openK };
+  }
+
+  function dayOps(d) {
+    const hs = planHours(d);
+    if (!hs) return null;
+    const openK = d + "T" + pad(hs.open) + ":00", closeK = d + "T" + pad(hs.close) + ":00";
+    const iO = idxOf[openK], iC = idxOf[closeK];
+    if (iO == null || iC == null) return { d, openK, closeK, missing: true };
+    const hrs = range(iO + 1, iC).map(evalHour), ev = [];
+    // retouches après chaque 3 cm de neige tombés pendant l'ouverture
+    let acc = 0, from = null;
+    hrs.forEach(x => {
+      if (x.s > 0.05) { acc += x.s; from = from || x.key; }
+      if (acc >= 3) { x.pass = true; ev.push({ key: x.endKey, ic: "🚜", lvl: "warn", t: x.endKey === closeK ? "Repasse à la fermeture" : `Repasse vers ${hh(x.endKey)}`, s: `+${fr(acc, 0)} cm depuis ${hh(from)}.` }); acc = 0; from = null; }
+    });
+    if (acc >= 1) ev.push({ key: closeK, ic: "🚜", lvl: "ok", t: "Repasse à la fermeture", s: `+${fr(acc, 0)} cm depuis ${hh(from)}.` });
+    const wetH = hrs.filter(x => x.pt === "rain" || x.pt === "mix" || x.pt === "ice");
+    if (wetH.length) {
+      const ty = wetH.some(x => x.pt === "ice") ? "ice" : "rain";
+      ev.push({ key: wetH[0].key, ic: TYPE[ty].ic, lvl: "bad", t: `${TYPE[ty].Name} de ${hh(wetH[0].key)} à ${hh(wetH[wetH.length - 1].endKey)}`, s: "Neige lourde et collante : évite de compacter pendant la pluie." });
+    }
+    const soft = hrs.find(x => x.t > 0.5 || wetIdx(x.k).s > 70);
+    if (soft && !wetH.length) {
+      const cool = hrs.find(x => x.k > soft.k && x.t <= -1);
+      ev.push({ key: soft.key, ic: "💧", lvl: "ok", t: `La neige ramollit vers ${hh(soft.key)}`,
+        s: `Tubes plus lents, ornières possibles. Évite de damer la neige molle${cool ? ` : repasse quand ça refroidit (vers ${hh(cool.key)})` : ""}.` });
+    }
+    let gx = 0, gk = null;
+    hrs.forEach(x => { if (x.g > gx) { gx = x.g; gk = x.key; } });
+    const loose = S(k => cm[k], (idxOf[addH(d + "T18:00", -24)] ?? 0) + 1, iC) >= 2;
+    if (gx >= 30 && loose) ev.push({ key: gk, ic: "🌬️", lvl: "warn", t: `Rafales ${Math.round(gx)} km/h vers ${hh(gk)}`, s: "La neige poudreuse peut remplir les couloirs : repasse après le vent." });
+    let lastWarm = -1;
+    for (let k = Math.max(0, iO - 12); k <= iC; k++) if (T[k] > 0.5 || (liq(k) > 0.2 && T0[k] > 0)) lastWarm = k;
+    if (lastWarm >= 0) {
+      for (let k = Math.max(lastWarm + 1, iO + 1); k <= Math.min(N - 1, iC + 12); k++) if (T[k] <= -2) {
+        const evening = k > iC;
+        ev.push({ key: time[k], ic: "🧊", lvl: "warn", t: `Regel ${evening ? "ce soir " : ""}vers ${hh(time[k])}`,
+          s: evening ? "Les ornières vont geler : prévois la fraise demain matin." : "La neige mouillée durcit : les ornières gèlent, passe la fraise dès que possible." });
+        break;
+      }
+    }
+    ev.sort((a, b) => (a.key < b.key ? -1 : 1));
+    return { d, openK, closeK, hrs, ev };
+  }
+
+  // Jour visé : aujourd'hui jusqu'à la fermeture, ensuite le prochain jour d'ouverture
+  let pday = null;
+  for (let dd = 0; dd < 6 && !pday; dd++) {
+    const d = dayOf(addH(today + "T12:00", 24 * dd)), hs = planHours(d);
+    if (hs && d + "T" + pad(hs.close) + ":00" > nowKey) pday = d;
+  }
+  const dayWord = d => (d === today ? "aujourd'hui" : W(d + "T12:00").replace(/ 12h$/, ""));
+  const plan = pday ? { day: pday, dayWord: dayWord(pday), hours: planHours(pday), morning: morningOf(pday), ops: dayOps(pday) } : null;
+  if (plan) {
+    const M = plan.morning, O = plan.ops, nowHourKey = nowKey.slice(0, 13) + ":00";
+    if (active) plan.lead = `${falling(active.type)}, jusqu'à ≈ ${active.openEnd ? "plus tard" : W(active.endKey)}${active.left >= 0.5 ? ` (+${fr(active.left)} cm)` : ""}.`;
+    if (O && O.ev) O.shown = O.ev.filter(e => e.key >= nowHourKey);
+    if (M && M.past) {
+      for (let dd = 1; dd < 6 && !plan.next; dd++) {
+        const d = dayOf(addH(pday + "T12:00", 24 * dd));
+        if (planHours(d)) { plan.next = morningOf(d); plan.nextWord = dayWord(d); }
+      }
+    }
+    const lv = [M && !M.missing && !M.past ? M.lvl : "good", ...((O && O.shown) || []).map(e => e.lvl)];
+    plan.lvl = lv.includes("bad") ? "bad" : lv.some(v => v === "warn" || v === "ok") ? "warn" : "good";
+    if (M && !M.missing && !M.past) {
+      const io = idxOf[M.openK], wi = wetIdx(io), sf = surface(io);
+      plan.atOpen = { key: M.openK, T: T[io], wet: wi.lvl, speed: SPEEDS[sf.speed], pt: ptype[io + 1] };
+    }
+    // bande horaire du jour : du début du damage (ou de maintenant) jusqu'à la fermeture
+    const iFrom = Math.max(nowIdx, idxOf[M && !M.missing ? M.startK : (O && O.openK)] ?? nowIdx), iTo = idxOf[O && O.closeK];
+    if (iTo != null && iTo > iFrom) plan.strip = range(iFrom + 1, iTo).map(k => {
+      const c = evalHour(k);
+      c.morning = !!(M && !M.missing && c.key >= M.startK && c.key < M.openK);
+      c.pass = !!(O && O.hrs && O.hrs.some(x => x.pass && x.k === k));
+      return c;
+    });
+    cells.forEach(c => {
+      c.morning = !!(M && !M.missing && c.key >= M.startK && c.key < M.openK)
+        || !!(plan.next && !plan.next.missing && c.key >= plan.next.startK && c.key < plan.next.openK);
+      c.pass = !!(O && O.hrs && O.hrs.some(x => x.pass && x.k === c.k));
+    });
+  }
+
+  // ---- Alertes : ce que l'équipe ne voit pas d'un coup d'œil ----
   const alerts = [];
-  let wasWarm = false, wasWarmAt = null;
-  for (let k = Math.max(0, nowIdx - 23); k <= nowIdx; k++) if (h.temperature_2m[k] > 0.5 || (n0(h.rain[k]) + n0(h.showers[k]) > 0.2)) { wasWarm = true; wasWarmAt = k; }
-  let freezeAt = null;
-  if (wasWarm || T > 0) for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + 18); k++) if (h.temperature_2m[k] <= -2) { freezeAt = k; break; }
-  if (freezeAt != null) alerts.push({ ic: "🧊", lvl: "bad", t: `Regel vers ${hh(h.time[freezeAt])}`,
-    s: `La neige mouillée va geler dur. Dame juste avant ou pendant le regel (vers ${hh(h.time[freezeAt])}) pour figer une belle surface. Plus tard, il faudra fraiser la croûte.` });
-
-  const ice = eps.find(e => e.type === "ice" && e.b >= nowIdx - 12 && e.a <= nowIdx + 12);
-  if (ice) alerts.push({ ic: "⚠️", lvl: "bad", t: "Pluie verglaçante", s: `${ice.status === "done" ? "Tombée" : ice.status === "now" ? "En cours" : "Prévue"} de ${hh(ice.start)} à ${hh(ice.end)}. Couloirs glacés : prudence avec la machine dans les pentes.` });
-
-  const fresh24 = sum("snowfall", Math.max(0, nowIdx - 23), nowIdx) + (active ? active.left : 0);
+  (b.alerts || []).forEach(x => alerts.push({ ic: "📢", lvl: x.type === "warning" ? "bad" : "warn",
+    t: x.name.charAt(0).toUpperCase() + x.name.slice(1), s: "Environnement Canada" + (x.end ? ` · jusqu'à ${W(localKey(Date.parse(x.end)))}` : ""), more: x.text }));
+  const ice = eps.find(e => e.type === "ice" && e.z >= nowIdx - 12 && e.a <= nowIdx + 24);
+  if (ice) alerts.push({ ic: "🧊", lvl: "bad", t: "Pluie verglaçante", s: `${ice.status === "done" ? "Tombée" : ice.status === "now" ? "En cours" : "Prévue"} de ${W(ice.startKey)} à ${W(ice.endKey)}. Couloirs glacés : prudence avec la dameuse dans les pentes.` });
+  const inPlan = ic => !!(plan && plan.ops && (plan.ops.shown || []).some(e => e.ic === ic));
+  if (freezeAt && !(plan && plan.ops && (plan.ops.shown || []).some(e => e.ic === "🧊" && e.key === freezeAt))) alerts.push({ ic: "🧊", lvl: "bad", t: `Regel vers ${W(freezeAt)}`,
+    s: "La neige mouillée va durcir. Ne compacte pas la neige détrempée juste avant : laisse-la égoutter, puis passe la fraise après le regel pour casser la croûte. Sinon : couloirs glacés et tubes très rapides." });
+  if (cur.T < 0) {
+    let mx = -99, mk = null;
+    for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + 24); k++) if (T[k] > mx) { mx = T[k]; mk = time[k]; }
+    if (mx >= 3) alerts.push({ ic: "🌡️", lvl: "warn", t: `Redoux : ${deg(mx)} vers ${W(mk)}`, s: "La neige va ramollir. Dame avant le redoux, ou attends le regel qui suit." });
+  }
+  const fresh24 = S(k => cm[k], nowIdx - 23, nowIdx) + S(k => cm[k], nowIdx + 1, nowIdx + 12);
   let gMax = 0, gAt = null;
-  for (let k = nowIdx; k <= Math.min(N - 1, nowIdx + 12); k++) if (n0(h.wind_gusts_10m[k]) > gMax) { gMax = n0(h.wind_gusts_10m[k]); gAt = k; }
-  if (fresh24 >= 2 && gMax >= 30) alerts.push({ ic: "🌬️", lvl: "warn", t: `Poudrerie : rafales ${Math.round(gMax)} km/h vers ${hh(h.time[gAt])}`,
-    s: `${fr(fresh24)} cm de neige fraîche peuvent remplir les couloirs déjà damés. Mieux vaut damer après le vent.` });
+  for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + 12); k++) if (gust[k] > gMax) { gMax = gust[k]; gAt = time[k - 1]; }
+  if (fresh24 >= 2 && gMax >= 30 && !inPlan("🌬️")) alerts.push({ ic: "🌬️", lvl: "warn", t: `Poudrerie : rafales ${Math.round(gMax)} km/h vers ${W(gAt)}`,
+    s: `${fr(fresh24, 0)} cm de neige fraîche peuvent remplir les couloirs déjà damés. Mieux vaut damer après le vent.` });
+  const rain12 = S(liq, nowIdx - 11, nowIdx);
+  if (rain12 >= 1) alerts.push({ ic: "🌧️", lvl: "warn", t: "Pluie sur la neige", s: `${fr(rain12)} mm en 12 h : la neige est lourde et gorgée d'eau.` });
+  const minT24 = Math.min(...T.slice(nowIdx, nowIdx + 25));
+  if (minT24 <= -25) alerts.push({ ic: "🥶", lvl: "warn", t: `Grand froid : ${deg(minT24)}`, s: "Laisse bien chauffer la dameuse (hydraulique) avant de partir." });
+  if (cur.app <= -27) alerts.push({ ic: "🥶", lvl: "warn", t: `Froid ressenti ${deg(cur.app)}`, s: "Risque de gelures en quelques minutes hors de la cabine." });
+  if (conf && conf.lvl === "bad") alerts.push({ ic: "🎲", lvl: "warn", t: "Prévision incertaine", s: conf.text });
 
-  const depth = n0(h.snow_depth[nowIdx]) * 100;
-  if (liquid(Math.max(0, nowIdx - 11), nowIdx) >= 1 && depth > 0) alerts.push({ ic: "🌧️", lvl: "warn", t: "Pluie sur la neige", s: `${fr(liquid(Math.max(0, nowIdx - 11), nowIdx))} mm en 12 h : la neige est lourde et gorgée d'eau.` });
+  // ---- Fabrication de neige ----
+  const twCat = tw => (tw <= -7 ? { lvl: "good", name: "Excellente" } : tw <= -4 ? { lvl: "good", name: "Bonne" } : tw <= -2.5 ? { lvl: "ok", name: "Possible (neige mouillée)" } : { lvl: "bad", name: "Impossible" });
+  let fab = { hours: 0, run: null, min: 99 }, fr0 = null;
+  cells.forEach((cl, j) => {
+    const tw = Tw[cl.k];
+    fab.min = Math.min(fab.min, tw);
+    if (tw <= -2.5) { fab.hours++; fr0 = fr0 ? { ...fr0, z: j } : { a: j, z: j }; if (!fab.run || fr0.z - fr0.a > fab.run.z - fab.run.a) fab.run = { ...fr0 }; }
+    else fr0 = null;
+  });
+  if (fab.run) fab.run = { from: cells[fab.run.a].key, to: cells[fab.run.z].endKey };
 
-  const app = d.current.apparent_temperature;
-  if (app <= -27) alerts.push({ ic: "🥶", lvl: "warn", t: `Froid ressenti ${deg(app)}`, s: "Risque de gelures en quelques minutes à l'extérieur de la machine." });
+  // ---- En bref (texte automatique) ----
+  const brief = [];
+  const total = snowEve + snowToday;
+  const firstEp = eps.find(e => e.z > y18 && e.a <= nowIdx + 1);
+  if (total >= 0.2 || rainSince >= 0.2) {
+    brief.push(`Depuis hier 18h : ${total >= 0.2 ? `${fr(total)} cm de neige ${rhoSince ? densWord(rhoSince) : ""}` : ""}${total >= 0.2 && rainSince >= 0.2 ? " et " : ""}${rainSince >= 0.2 ? `${fr(rainSince)} mm de pluie` : ""}${firstEp ? ` (début ${W(firstEp.startKey)})` : ""}.`);
+  } else brief.push("Rien n'est tombé depuis hier 18h.");
+  if (active) {
+    const agree = models ? models.filter(x => x.startKey).length : 0;
+    brief.push(`${falling(active.type)}${active.rate >= 0.2 ? ` (≈ ${fr(active.rate)} cm/h)` : ""}, jusqu'à ≈ ${active.openEnd ? "plus tard" : W(active.endKey)}${active.left >= 0.5 ? `, encore ${fr(active.left)} cm` : ""}.${models ? ` ${agree}/${models.length} modèles le prévoient.` : ""}`);
+  } else if (next) {
+    brief.push(`Prochaine ${TYPE[next.type].name} vers ${W(next.startKey)}${next.snow >= 0.5 ? ` (≈ ${fr(next.snow, 0)} cm)` : ""}.`);
+  } else brief.push("Rien de prévu dans les 24 prochaines heures.");
+  {
+    let mn = 99, mnK = null, mx = -99, mxK = null;
+    for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + 24); k++) { if (T[k] < mn) { mn = T[k]; mnK = time[k]; } if (T[k] > mx) { mx = T[k]; mxK = time[k]; } }
+    brief.push(`Prochaines 24 h : minimum ${deg0(mn)} vers ${W(mnK)}, maximum ${deg0(mx)} vers ${W(mxK)}.`);
+  }
+  if (gMax >= 30) brief.push(`Rafales jusqu'à ${Math.round(gMax)} km/h vers ${W(gAt)}.`);
+  if (plan && plan.morning && !plan.morning.missing) {
+    const mm = plan.morning.past ? plan.next : plan.morning;
+    if (mm && !mm.missing) brief.push(`Damage du matin${plan.morning.past ? ` (${plan.nextWord})` : ""}, ${hh(mm.startK)}–${hh(mm.openK)} : ${mm.title.charAt(0).toLowerCase() + mm.title.slice(1)}.`);
+  }
+  if (plan && plan.atOpen) brief.push(`À l'ouverture (${W(plan.atOpen.key)}) : ${deg0(plan.atOpen.T)}, neige ${plan.atOpen.wet === "normal" ? "normale" : plan.atOpen.wet === "sec" ? "sèche" : "humide"}, glisse ${plan.atOpen.speed.toLowerCase()}.`);
 
-  // Fabrication de neige
-  const tw = wetBulb(T, RH);
-  let snowmakeHours = 0;
-  for (const x of hours) if (wetBulb(h.temperature_2m[x.i], h.relative_humidity_2m[x.i]) <= -2.5) snowmakeHours++;
+  const wNow = wetIdx(nowIdx, cur.T, cur.RH), sNow = surface(nowIdx, cur.T);
+  const offSeason = !officialHours(today) && !opening(nowKey) && depth < 1;
 
-  const di = h.time.indexOf(today + "T00:00");
-  const dayIdx = d.daily ? d.daily.time.indexOf(today) : -1;
+  // ---- Instantané pour « Depuis ta dernière visite » ----
+  const fc = {}; cells.forEach(cl => { fc[cl.key] = Math.round(cl.s * 10) / 10; });
+  const snap = {
+    at: Date.now(), nowKey, sim: !!o.sim,
+    activeType: active ? active.type : null, activeStart: active ? active.startKey : null, activeEnd: active ? active.endKey : null,
+    nextType: next ? next.type : null, nextStart: next ? next.startKey : null,
+    lastEnd: lastDone ? lastDone.endKey : null,
+    pday, morning: plan && plan.morning && !plan.morning.missing ? plan.morning.title : null,
+    passes: plan && plan.ops && plan.ops.ev ? plan.ops.ev.filter(e => e.ic === "🚜").map(e => hh(e.key)).join(", ") : "",
+    freeze: freezeAt, fc,
+    alerts: alerts.filter(x => x.ic === "📢").map(x => x.t),
+  };
 
-  return { noSnow, h, nowIdx, today, y18, mid, snowEve, snowToday, rainSince, eps, active, last, next,
-    humid, humidWhy, humidScore, hours, advice, adviceLvl, alerts, tw, snowmakeHours, depth, di,
-    sun: dayIdx >= 0 ? { rise: d.daily.sunrise[dayIdx], set: d.daily.sunset[dayIdx] } : null };
+  return {
+    time, N, T, T0, corr, RH, Tw, app, cm, liq, ptype, gust, wind, codes, isNight, rad, sunOf,
+    nowIdx, nowKey, frac, today, y18, mid, W, cur, depth, corrInfo,
+    snowEve, snowToday, rainSince, sweSince, rhoSince, eps, active, lastDone, next,
+    models, conf, wNow, sNow, SPEEDS, cells, plan, alerts, fab, twCat, brief, snap, offSeason,
+    openNow, nextOpen: opening(nowKey), closeToday: closing(today), hoursFor, isOpenAt: isPlanOpen, sim: !!o.sim,
+  };
 }
 
-// ---------- Composants ----------
-const LVL = { good: ["var(--good)", "✓", "Bon"], ok: ["var(--warn)", "~", "Moyen"], warn: ["var(--warn)", "!", "Attention"], bad: ["var(--bad)", "✕", "Mauvais"] };
-const TYPE = { snow: ["❄️", "Neige", "var(--snow)"], rain: ["🌧️", "Pluie", "var(--rain)"], mix: ["🌨️", "Neige et pluie", "var(--rain)"], ice: ["🧊", "Pluie verglaçante", "var(--ice)"] };
-const dayWord = (t, today) => t.slice(0, 10) === today ? "" : t.slice(0, 10) < today ? "hier " : "demain ";
+// Ce qui a changé depuis la dernière visite
+function diffSnap(o, n, A) {
+  if (!o || !n || o.sim !== n.sim) return null;
+  const age = n.at - o.at;
+  if (age < 10 * 60e3 || age > 48 * 3600e3) return null;
+  const W = A.W, out = [];
+  const from = A.time.findIndex(t => t > o.nowKey.slice(0, 13) + ":00");
+  if (from > 0 && from <= A.nowIdx) {
+    let s = 0, r = 0;
+    for (let i = from; i <= A.nowIdx; i++) { s += A.cm[i]; r += A.liq(i); }
+    if (s >= 0.5) out.push(["❄️", `${fr(s)} cm sont tombés depuis.`]);
+    if (r >= 0.5) out.push(["🌧️", `${fr(r)} mm de pluie depuis.`]);
+  }
+  if (!o.activeEnd && n.activeEnd) out.push([TYPE[n.activeType].ic, `${TYPE[n.activeType].Name} a commencé (${W(n.activeStart)}).`]);
+  if (o.activeEnd && !n.activeEnd && n.lastEnd) out.push(["✅", `La ${TYPE[o.activeType].name} s'est arrêtée (${W(n.lastEnd)}).`]);
+  if (o.activeEnd && n.activeEnd && o.activeEnd !== n.activeEnd) {
+    const d = hoursBetween(o.activeEnd, n.activeEnd);
+    out.push(["⏱️", `Fin prévue ${d > 0 ? "repoussée" : "avancée"} : ${W(o.activeEnd)} → ${W(n.activeEnd)}.`]);
+  }
+  if (!n.activeEnd) {
+    if (!o.nextStart && n.nextStart && !o.activeEnd) out.push(["🆕", `Nouvelle prévision : ${TYPE[n.nextType].name} vers ${W(n.nextStart)}.`]);
+    if (o.nextStart && !n.nextStart && o.nextStart > n.nowKey) out.push(["🚫", `La ${TYPE[o.nextType].name} prévue vers ${W(o.nextStart)} n'est plus annoncée.`]);
+    if (o.nextStart && n.nextStart && Math.abs(hoursBetween(o.nextStart, n.nextStart)) >= 2) out.push(["⏱️", `Début prévu déplacé : ${W(o.nextStart)} → ${W(n.nextStart)}.`]);
+  }
+  const keys = Object.keys(o.fc || {}).filter(k => k >= n.nowKey.slice(0, 13) + ":00" && n.fc[k] != null).sort();
+  if (keys.length >= 3) {
+    const so = keys.reduce((s, k) => s + o.fc[k], 0), sn = keys.reduce((s, k) => s + n.fc[k], 0);
+    if (Math.abs(sn - so) >= Math.max(2, .3 * Math.max(so, sn))) out.push([sn > so ? "📈" : "📉", `Neige prévue d'ici ${W(addH(keys[keys.length - 1], 1))} : ${fr(so, 0)} → ${fr(sn, 0)} cm.`]);
+  }
+  if (o.pday === n.pday) {
+    if (o.morning && n.morning && o.morning !== n.morning) out.push(["🚜", `Damage du matin : « ${o.morning} » → « ${n.morning} ».`]);
+    if ((o.passes || "") !== (n.passes || "")) out.push(["🚜", `Retouches dans la journée : ${o.passes || "aucune"} → ${n.passes || "aucune"}.`]);
+  }
+  if (n.freeze && o.freeze !== n.freeze) out.push(["🧊", `Regel maintenant prévu vers ${W(n.freeze)}.`]);
+  (n.alerts || []).filter(x => !(o.alerts || []).includes(x)).forEach(x => out.push(["📢", `Nouvel avis : ${x}.`]));
+  return out;
+}
 
+// =====================================================================
+// Composants
+// =====================================================================
 function useWidth(ref) {
   const [w, setW] = useState(320);
   useEffect(() => {
     if (!ref.current) return;
-    const ro = new ResizeObserver(([e]) => setW(Math.round(e.contentRect.width)));
+    const set = w => { if (w > 120) setW(Math.round(w)); };   // ignore les mesures à 0 pendant la mise en page
+    set(ref.current.getBoundingClientRect().width);
+    const ro = new ResizeObserver(([e]) => set(e.contentRect.width));
     ro.observe(ref.current);
     return () => ro.disconnect();
   }, []);
   return w;
 }
+const Dot = ({ c, size }) => html`<span class="dot" style=${{ background: c, width: size, height: size }}></span>`;
+const ago = ms => { const m = Math.round(ms / 60e3); return m < 1 ? "à l'instant" : m < 60 ? `il y a ${m} min` : `il y a ${Math.floor(m / 60)} h ${pad(m % 60)}`; };
 
-function TempChart({ A }) {
-  const box = useRef(null), W = useWidth(box);
-  const { h, nowIdx, today, y18 } = A;
-  const a = y18, b = Math.min(h.time.length - 1, nowIdx + AHEAD);
+function DayStrip({ A }) {
+  const st = A.plan && A.plan.strip;
+  if (!st || !st.length) return null;
+  const n = st.length, pos = j => (j / n) * 100;
+  const step = n > 14 ? 3 : 2;
+  return html`<div class="tl" aria-label="Déroulement de la journée">
+    <div class="tl-row tl-open">${st.map((c, j) => html`<div key=${j} style=${{ background: c.morning ? "var(--snow)" : c.open ? "var(--ink2)" : "transparent" }}></div>`)}</div>
+    <div class="tl-row tl-lv">${st.map((c, j) => html`<div key=${j} style=${{ background: LVL[c.lvl].c }}>${c.pass ? html`<span class="tl-pass">↻</span>` : null}</div>`)}</div>
+    <div class="tl-lab">${st.map((c, j) => (j % step === 0 ? html`<span key=${j} style=${{ left: pos(j) + "%" }}>${hh(c.key)}</span>` : null))}<span style=${{ right: 0, left: "auto", transform: "none" }}>${hh(st[n - 1].endKey)}</span></div>
+    <div class="legend" style=${{ marginTop: 2 }}>
+      <span><i style=${{ background: "var(--snow)", height: 4 }}></i>damage du matin</span>
+      <span><i style=${{ background: "var(--ink2)", height: 4 }}></i>ouvert</span>
+      <span><i style=${{ background: "var(--good)" }}></i>bon</span>
+      <span><i style=${{ background: "var(--warn)" }}></i>moyen</span>
+      <span><i style=${{ background: "var(--bad)" }}></i>mauvais</span>
+      <span>↻ repasser</span>
+    </div>
+  </div>`;
+}
+
+function Chart({ A }) {
+  const box = useRef(null), Wd = useWidth(box);
+  const { time, T, cm, liq, ptype, nowIdx, y18, W, isNight, gust, Tw, plan, cur, frac } = A;
+  const a = y18, z = Math.min(time.length - 1, nowIdx + AHEAD);
   const [sel, setSel] = useState(null);
-  const H1 = 150, H2 = 44, gap = 22, padL = 30, padR = 8, padT = 8;
-  const span = b - a, step = (W - padL - padR) / span;
-  const x = i => padL + (i - a) * step;
-  const temps = h.temperature_2m.slice(a, b + 1);
+  const padL = 30, padR = 8, padT = 14, H1 = 150, gap = 20, H2 = 46;
+  const step = (Wd - padL - padR) / (z - a), x = i => padL + (i - a) * step;
+  const temps = T.slice(a, z + 1);
   let lo = Math.min(...temps), hi = Math.max(...temps);
   if (lo < 5 && hi > -5) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
   lo = Math.floor((lo - 1) / 5) * 5; hi = Math.ceil((hi + 1) / 5) * 5;
   const y = v => padT + (hi - v) / (hi - lo) * H1;
   const ticks = []; for (let v = lo; v <= hi; v += 5) ticks.push(v);
-  const path = (from, to) => { let s = ""; for (let i = from; i <= to; i++) s += (i === from ? "M" : "L") + x(i).toFixed(1) + "," + y(h.temperature_2m[i]).toFixed(1); return s; };
-  const pMax = Math.max(2, ...h.precipitation.slice(a, b + 1).map(n0));
+  const path = (f, t) => { let s = ""; for (let i = f; i <= t; i++) s += (i === f ? "M" : "L") + x(i).toFixed(1) + "," + y(T[i]).toFixed(1); return s; };
+  const amt = i => (ptype[i] === "snow" || ptype[i] === "mix" ? cm[i] : liq(i));
+  let pMax = 2; for (let i = a + 1; i <= z; i++) if (ptype[i]) pMax = Math.max(pMax, amt(i));
   const by = padT + H1 + gap + H2;
-  const barH = v => n0(v) / pMax * H2;
-  const mids = []; for (let i = a; i <= b; i++) if (h.time[i].endsWith("T00:00")) mids.push(i);
-  const s = sel ?? nowIdx;
-  const pick = e => {
-    const r = e.currentTarget.getBoundingClientRect();
-    setSel(Math.max(a, Math.min(b, Math.round((e.clientX - r.left - padL) / step) + a)));
-  };
-  const typeAt = i => n0(h.precipitation[i]) >= 0.1 ? precipType(h, i) : null;
-  const ts = typeAt(s);
+  const s = sel ?? nowIdx, live = sel == null;
+  const pick = e => { const r = e.currentTarget.getBoundingClientRect(); setSel(clamp(Math.round((e.clientX - r.left - padL) / step) + a, a, z)); };
+  const nights = [], opens = [];
+  for (let i = a; i < z; i++) {
+    if (isNight[i]) { const l = nights[nights.length - 1]; if (l && l.z === i) l.z = i + 1; else nights.push({ a: i, z: i + 1 }); }
+    if (A.isOpenAt(time[i])) { const l = opens[opens.length - 1]; if (l && l.z === i) l.z = i + 1; else opens.push({ a: i, z: i + 1 }); }
+  }
+  const idx = k => time.indexOf(k);
+  const mw = plan && plan.morning && !plan.morning.missing && !plan.morning.past ? plan.morning : plan && plan.next && !plan.next.missing ? plan.next : null;
+  const wA = mw ? idx(mw.startK) : -1, wZ = mw ? idx(mw.openK) : -1;
+  const labs = []; for (let i = a; i <= z; i++) if (+time[i].slice(11, 13) % 6 === 0) labs.push(i);
+  const nx = Math.min(s + 1, time.length - 1), pt = ptype[nx];
   return html`<div ref=${box}>
     <div class="chart-read">
-      <span><b>${dayWord(h.time[s], today)}${hh(h.time[s])}</b> ${s === nowIdx ? "· maintenant" : s > nowIdx ? "· prévu" : ""}</span>
-      <span><b>${deg(h.temperature_2m[s])}</b>${ts ? html` · ${TYPE[ts][1].toLowerCase()} ${ts === "snow" || ts === "mix" ? fr(h.snowfall[s]) + " cm" : fr(n0(h.rain[s]) + n0(h.showers[s])) + " mm"}` : ""} · 💨 ${Math.round(n0(h.wind_gusts_10m[s]))}</span>
+      <span><b>${live ? "maintenant · " + A.nowKey.slice(11, 16).replace(":", "h") : W(time[s])}</b>${!live && s > nowIdx ? " · prévu" : ""}<br/><span class="faint">temp. humide ${deg(live ? cur.Tw : Tw[s])}</span></span>
+      <span style=${{ textAlign: "right" }}><b>${deg(live ? cur.T : T[s])}</b> · 💨 ${Math.round(live ? n0(cur.gust) : gust[s])} km/h<br/>
+        <span class="faint">${pt ? `${TYPE[pt].name} ${pt === "snow" || pt === "mix" ? fr(cm[nx]) + " cm" : fr(liq(nx)) + " mm"} l'heure suivante` : "sec l'heure suivante"}</span></span>
     </div>
-    <svg width=${W} height=${by + 18} style=${{ display: "block", touchAction: "none" }}
-      onPointerDown=${pick} onPointerMove=${pick} onPointerLeave=${() => setSel(null)}>
+    <svg width=${Wd} height=${by + 18} style=${{ display: "block", touchAction: "pan-y" }} onPointerDown=${pick} onPointerMove=${pick} onPointerLeave=${() => setSel(null)}>
+      ${nights.map((r, j) => html`<rect key=${"n" + j} x=${x(r.a)} y=${padT} width=${x(r.z) - x(r.a)} height=${by - padT} fill="#000" opacity=".22" />`)}
+      ${opens.map((r, j) => html`<rect key=${"o" + j} x=${x(r.a)} y=${padT - 9} width=${Math.max(2, x(r.z) - x(r.a))} height="4" rx="2" fill="var(--ink2)" />`)}
       ${ticks.map(v => html`<g key=${"t" + v}>
-        <line x1=${padL} x2=${W - padR} y1=${y(v)} y2=${y(v)} stroke=${v === 0 ? "#5b5f6b" : "#23262f"} stroke-dasharray=${v === 0 ? "4 3" : ""} />
-        <text x=${padL - 6} y=${y(v) + 4} text-anchor="end" font-size="11" fill=${v === 0 ? "#b4b2ab" : "#7c7a74"}>${v}°</text></g>`)}
-      ${mids.map(i => html`<g key=${"m" + i}>
-        <line x1=${x(i)} x2=${x(i)} y1=${padT} y2=${by} stroke="#2a2e39" />
-        <text x=${x(i) + 4} y=${by + 14} font-size="11" fill="#7c7a74">${i <= nowIdx || h.time[i].slice(0, 10) === today ? "aujourd'hui" : "demain"}</text></g>`)}
-      <text x=${padL} y=${by + 14} font-size="11" fill="#7c7a74">hier 18h</text>
-      <path d=${path(a, nowIdx)} fill="none" stroke="var(--temp)" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round" />
-      <path d=${path(nowIdx, b)} fill="none" stroke="var(--temp)" stroke-width="2" stroke-dasharray="5 4" opacity=".7" stroke-linecap="round" />
-      <line x1=${x(nowIdx)} x2=${x(nowIdx)} y1=${padT} y2=${by} stroke="#ecebe6" stroke-width="1" opacity=".5" />
-      ${Array.from({ length: span }, (_, k) => {
-        const i = a + k + 1, v = n0(h.precipitation[i]); if (v < 0.05) return null;
-        const t = typeAt(i) || "snow", bh = Math.max(2, barH(v)), w = Math.max(1.5, step - 2);
-        return html`<rect key=${"p" + i} x=${x(i) - step + 1} y=${by - bh} width=${w} height=${bh} rx=${Math.min(2, w / 2)} fill=${TYPE[t][2]} opacity=${i <= nowIdx ? 1 : .55} />`;
+        <line x1=${padL} x2=${Wd - padR} y1=${y(v)} y2=${y(v)} stroke=${v === 0 ? "#6b6f7b" : "#262a33"} strokeDasharray=${v === 0 ? "4 3" : null} />
+        <text x=${padL - 6} y=${y(v) + 4} textAnchor="end" fontSize="11" fill=${v === 0 ? "#b4b2ab" : "#85837c"}>${fr(v, 0)}°</text></g>`)}
+      ${wA >= a && wZ > wA && wZ <= z ? html`<rect x=${x(wA)} y=${padT + H1 - 6} width=${x(wZ) - x(wA)} height="6" rx="3" fill="var(--snow)" />` : null}
+      ${labs.map(i => html`<g key=${"l" + i}>
+        ${time[i].endsWith("T00:00") ? html`<line x1=${x(i)} x2=${x(i)} y1=${padT} y2=${by} stroke="#2f3340" />` : null}
+        <text x=${x(i)} y=${by + 14} textAnchor="middle" fontSize="10.5" fill="#85837c">${time[i].endsWith("T00:00") ? (dayOf(time[i]) === A.today ? "auj." : "dem.") : hh(time[i])}</text></g>`)}
+      <path d=${path(a, nowIdx)} fill="none" stroke="var(--temp)" strokeWidth="2.25" strokeLinejoin="round" strokeLinecap="round" />
+      <path d=${path(nowIdx, z)} fill="none" stroke="var(--temp)" strokeWidth="2" strokeDasharray="5 4" opacity=".75" strokeLinecap="round" />
+      <line x1=${x(nowIdx + frac)} x2=${x(nowIdx + frac)} y1=${padT} y2=${by} stroke="#ecebe6" strokeWidth="1" opacity=".45" />
+      ${Array.from({ length: z - a }, (_, j) => {
+        const i = a + j + 1; if (!ptype[i]) return null;
+        const v = amt(i), bh = Math.max(2, v / pMax * H2), w = Math.max(1.5, step - 2);
+        return html`<rect key=${"p" + i} x=${x(i - 1) + 1} y=${by - bh} width=${w} height=${bh} rx=${Math.min(2, w / 2)} fill=${TYPE[ptype[i]].color} opacity=${i <= nowIdx ? 1 : .6} />`;
       })}
-      <line x1=${padL} x2=${W - padR} y1=${by} y2=${by} stroke="#2a2e39" />
-      <text x=${padL - 6} y=${by - H2 + 8} text-anchor="end" font-size="10" fill="#7c7a74">${fr(pMax, 0)}</text>
-      <text x=${padL - 6} y=${by} text-anchor="end" font-size="10" fill="#7c7a74">mm</text>
-      <line x1=${x(s)} x2=${x(s)} y1=${padT} y2=${by} stroke="#ecebe6" stroke-width="1" opacity=${sel != null ? .9 : 0} />
-      <circle cx=${x(s)} cy=${y(h.temperature_2m[s])} r="5" fill="var(--temp)" stroke="var(--card)" stroke-width="2" />
+      <line x1=${padL} x2=${Wd - padR} y1=${by} y2=${by} stroke="#2a2e39" />
+      <text x=${padL - 6} y=${by - H2 + 8} textAnchor="end" fontSize="10" fill="#85837c">${fr(pMax, 0)}</text>
+      <line x1=${x(s)} x2=${x(s)} y1=${padT} y2=${by} stroke="#ecebe6" strokeWidth="1" opacity=${sel != null ? .9 : 0} />
+      <circle cx=${live ? x(nowIdx + frac) : x(s)} cy=${y(live ? cur.T : T[s])} r="5" fill="var(--temp)" stroke="var(--card)" strokeWidth="2" />
     </svg>
     <div class="legend">
-      <span><i style=${{ background: "var(--temp)", height: 3, borderRadius: 2 }}></i>Température (pointillé = prévu)</span>
-      <span><i style=${{ background: "var(--snow)" }}></i>Neige</span>
-      <span><i style=${{ background: "var(--rain)" }}></i>Pluie</span>
-      <span><i style=${{ background: "var(--ice)" }}></i>Verglas</span>
+      <span><i style=${{ background: "var(--temp)", height: 3 }}></i>Température (pointillé = prévu)</span>
+      <span><i style=${{ background: "var(--snow)" }}></i>Neige (cm)</span>
+      <span><i style=${{ background: "var(--rain)" }}></i>Pluie (mm)</span>
+      <span><i style=${{ background: "var(--ice)" }}></i>Verglas (mm)</span>
+      <span><i style=${{ background: "#000", opacity: .5 }}></i>Nuit</span>
+      <span><i style=${{ background: "var(--ink2)", height: 4 }}></i>Ouvert</span>
+      <span><i style=${{ background: "var(--snow)", height: 5 }}></i>Damage du matin</span>
     </div>
-    <div class="faint" style=${{ marginTop: 6 }}>Touche le graphique pour lire une heure. Barres = précipitations en mm d'eau.</div>
+    <div class="faint" style=${{ marginTop: 6 }}>Glisse le doigt sur le graphique pour lire chaque heure.</div>
   </div>`;
 }
 
-function Episode({ e, today }) {
-  const [ic, name] = TYPE[e.type];
-  const when = e.status === "done" ? `${dayWord(e.start, today)}${hh(e.start)} → ${dayWord(e.end, today)}${hh(e.end)}, terminé`
-    : e.status === "now" ? `depuis ${dayWord(e.start, today)}${hh(e.start)} → fin prévue ${e.openEnd ? "au-delà des prévisions" : dayWord(e.end, today) + hh(e.end)}`
-    : `prévu ${dayWord(e.start, today)}${hh(e.start)} → ${dayWord(e.end, today)}${hh(e.end)}`;
+function Episode({ e, W, time }) {
+  const st = { done: "terminé", now: "en cours", next: "prévu" }[e.status];
+  const amount = e.snow >= 0.05 ? `${fr(e.snow)} cm` : `${fr(e.rain)} mm`;
   return html`<div class="ep">
-    <span style=${{ fontSize: "1.2rem" }}>${ic}</span>
-    <div style=${{ flex: 1, minWidth: 0 }}><b>${name}</b> <span class="muted">${when}</span></div>
-    <span class="pill">${e.snow >= 0.05 ? fr(e.snow) + " cm" : fr(e.rain) + " mm"}</span>
+    <div class="top">
+      <span style=${{ fontSize: "1.2rem", width: "1.4em", textAlign: "center" }}>${TYPE[e.type].ic}</span>
+      <div style=${{ flex: 1, minWidth: 0 }}><b>${TYPE[e.type].Name}</b> <span class="muted">${W(e.startKey)} → ${e.openEnd ? "…" : W(e.endKey)}</span></div>
+      <span class="pill" style=${e.status === "now" ? { background: "var(--ink)", color: "var(--bg)" } : null}>${st}</span>
+    </div>
+    <div class="ph">${amount}${e.dens && e.snow >= 0.5 ? `, neige ${e.dens}` : ""}${e.rain >= 0.2 && e.snow >= 0.05 ? ` · pluie ${fr(e.rain)} mm` : ""}
+      ${e.phases.length > 1 ? html`<br/>${e.phases.slice(0, 4).map(p => `${TYPE[p.type].Name} ${W(time[p.a - 1])}–${hh(time[p.z])}`).join(" → ")}` : null}</div>
   </div>`;
 }
 
-function Settings({ dev, setDev, scen, setScen, raw, setRaw, onClose }) {
+function Settings({ prefs, setPrefs, dev, setDev, scen, setScen, shift, setShift, raw, setRaw, onFakeVisit, onClose }) {
   const [ask, setAsk] = useState(false), [code, setCode] = useState(""), [err, setErr] = useState(false);
   const tryCode = () => {
-    if (code.trim().toUpperCase() === DEV_CODE) { setDev(true); store.set("dameur-dev", "1"); setAsk(false); setErr(false); }
+    if (code.trim().toUpperCase() === DEV_CODE) { setDev(true); store.set(K.dev, "1"); setAsk(false); setErr(false); }
     else setErr(true);
   };
+  const T = (label, on, f, sub) => html`<button class="toggle" onClick=${f}><span>${label}${sub ? html`<br/><span class="faint">${sub}</span>` : null}</span><span class=${"sw" + (on ? " on" : "")}></span></button>`;
+  const hrs = Array.from({ length: 24 }, (_, i) => i);
+  const custom = prefs.custom;
   return html`<div class="sheet-bg" onClick=${onClose}>
-    <div class="sheet" onClick=${e => e.stopPropagation()}>
+    <div class="sheet" onClick=${e => e.stopPropagation()} role="dialog" aria-label="Réglages">
       <h3>Réglages</h3>
-      ${!dev && !ask && html`<button class="btn" onClick=${() => setAsk(true)}>DEV</button>`}
-      ${ask && html`<div>
-        <input class="field" placeholder="Code" value=${code} autoFocus autoCapitalize="characters" autoComplete="off"
+      <h4>Affichage</h4>
+      ${T("Mode nuit (rouge)", prefs.night, () => setPrefs({ ...prefs, night: !prefs.night }), "Garde tes yeux habitués au noir dans la cabine.")}
+      ${T("Grand texte", prefs.big, () => setPrefs({ ...prefs, big: !prefs.big }))}
+      <h4>Horaire des Glissades</h4>
+      ${T("Horaire personnalisé", !!custom, () => setPrefs({ ...prefs, custom: custom ? null : { open: 10, close: 16 } }), custom ? null : "Sinon : horaire officiel 2026-2027.")}
+      ${custom ? html`<div class="row" style=${{ marginTop: 8 }}>
+        <div><div class="faint">Ouverture</div><select class="field" value=${custom.open} onChange=${e => setPrefs({ ...prefs, custom: { ...custom, open: +e.target.value } })}>${hrs.map(h => html`<option key=${h} value=${h}>${pad(h)}h</option>`)}</select></div>
+        <div><div class="faint">Fermeture</div><select class="field" value=${custom.close} onChange=${e => setPrefs({ ...prefs, custom: { ...custom, close: +e.target.value } })}>${hrs.map(h => html`<option key=${h} value=${h}>${pad(h)}h</option>`)}</select></div>
+      </div>` : null}
+      <h4>Damage du matin</h4>
+      <select class="field" value=${prefs.lead || 3} onChange=${e => setPrefs({ ...prefs, lead: +e.target.value })}>
+        ${[1, 2, 3, 4, 5, 6].map(n => html`<option key=${n} value=${n}>Commence ${n} h avant l'ouverture (${pad(10 - n)}h pour 10h)</option>`)}
+      </select>
+      <h4>Sur l'iPhone</h4>
+      <p class="muted" style=${{ fontSize: ".9rem" }}>Pour l'avoir comme une app : dans Safari, touche le bouton Partager (carré avec une flèche), puis « Sur l'écran d'accueil ».</p>
+      <h4>Développeur</h4>
+      ${!dev && !ask ? html`<button class="btn" onClick=${() => setAsk(true)}>DEV</button>` : null}
+      ${ask ? html`<div>
+        <input class="field" placeholder="Code" value=${code} autoFocus autoCapitalize="characters" autoComplete="off" autoCorrect="off"
           onInput=${e => setCode(e.target.value)} onKeyDown=${e => e.key === "Enter" && tryCode()} />
-        ${err && html`<div class="faint" style=${{ color: "var(--bad)", marginTop: 6 }}>Mauvais code.</div>`}
+        ${err ? html`<div class="faint" style=${{ color: "var(--bad)", marginTop: 6 }}>Mauvais code.</div>` : null}
         <button class="btn on" onClick=${tryCode}>Entrer</button>
-      </div>`}
-      ${dev && html`<div>
-        <div class="devbar">Mode DEV actif : choisis une météo inventée pour tester la page.</div>
-        ${Object.entries(SCENARIOS).map(([k, v]) => html`<button key=${k} class=${"btn" + (scen === k ? " on" : "")} onClick=${() => { setScen(k); store.set("dameur-scen", k); }}>${v}</button>`)}
-        <button class=${"btn" + (raw ? " on" : "")} onClick=${() => setRaw(!raw)}>Tableau des données brutes</button>
-        <button class="btn" onClick=${() => { setDev(false); setScen("live"); store.set("dameur-dev", ""); store.set("dameur-scen", "live"); }}>Quitter DEV</button>
-      </div>`}
-      <button class="btn" onClick=${onClose}>Fermer</button>
+      </div>` : null}
+      ${dev ? html`<div>
+        <div class="devbar">Mode DEV actif : météo inventée, décalage de l'heure, données brutes.</div>
+        <div class="faint" style=${{ marginTop: 10 }}>Météo</div>
+        ${Object.entries(SCEN).map(([k, v]) => html`<button key=${k} class=${"btn small" + (scen === k ? " on" : "")} onClick=${() => setScen(k)}>${v.label}</button>`)}
+        <div class="faint" style=${{ marginTop: 14 }}>Décaler l'heure : <b class="muted">${shift > 0 ? "+" : ""}${shift} h</b></div>
+        <input type="range" min="-12" max="24" step="1" value=${shift} style=${{ width: "100%" }} onInput=${e => setShift(+e.target.value)} />
+        ${T("Tableau des données brutes", raw, () => setRaw(!raw))}
+        <button class="btn small" onClick=${onFakeVisit}>Simuler une visite il y a 6 h</button>
+        <button class="btn small" onClick=${() => { store.del(K.cache); store.del(K.seen); location.reload(); }}>Effacer les données gardées</button>
+        <button class="btn small" onClick=${() => { setDev(false); setScen("live"); setShift(0); store.del(K.dev); }}>Quitter DEV</button>
+      </div>` : null}
+      <button class="btn" style=${{ marginTop: 18 }} onClick=${onClose}>Fermer</button>
     </div>
   </div>`;
 }
 
 function RawTable({ A }) {
-  const { h, y18, nowIdx } = A;
-  const rows = []; for (let i = y18; i <= Math.min(h.time.length - 1, nowIdx + AHEAD); i++) rows.push(i);
+  const { time, y18, nowIdx, T, T0, corr, RH, Tw, cm, liq, gust, ptype, codes } = A;
+  const rows = []; for (let i = y18; i <= Math.min(time.length - 1, nowIdx + AHEAD); i++) rows.push(i);
   return html`<div class="card"><h2>Données brutes (DEV)</h2><div style=${{ overflowX: "auto" }}><table class="raw">
-    <tr><th>h</th><th>°C</th><th>HR</th><th>neige</th><th>pluie</th><th>raf.</th><th>code</th></tr>
-    ${rows.map(i => html`<tr key=${i} style=${{ color: i === nowIdx ? "var(--temp)" : "" }}>
-      <td>${h.time[i].slice(8, 10)} ${hh(h.time[i])}</td><td>${fr(h.temperature_2m[i])}</td><td>${h.relative_humidity_2m[i]}</td>
-      <td>${fr(h.snowfall[i])}</td><td>${fr(n0(h.rain[i]) + n0(h.showers[i]))}</td><td>${Math.round(n0(h.wind_gusts_10m[i]))}</td><td>${h.weather_code[i]}</td></tr>`)}
+    <thead><tr><th>h</th><th>mod.</th><th>corr</th><th>°C</th><th>HR</th><th>Tw</th><th>cm</th><th>mm</th><th>raf</th><th>type</th><th>code</th></tr></thead>
+    <tbody>${rows.map(i => html`<tr key=${i} style=${{ color: i === nowIdx ? "var(--temp)" : null }}>
+      <td>${time[i].slice(8, 10)} ${hh(time[i])}</td><td>${fr(T0[i])}</td><td>${fr(corr[i])}</td><td>${fr(T[i])}</td><td>${RH[i]}</td><td>${fr(Tw[i])}</td>
+      <td>${fr(cm[i])}</td><td>${fr(liq(i))}</td><td>${Math.round(gust[i])}</td><td>${ptype[i] || ""}</td><td>${codes[i] ?? ""}</td></tr>`)}</tbody>
   </table></div></div>`;
 }
 
+// =====================================================================
+// Application
+// =====================================================================
 function App() {
-  const [data, setData] = useState(null), [err, setErr] = useState(null), [busy, setBusy] = useState(false);
-  const [open, setOpen] = useState(false), [dev, setDev] = useState(store.get("dameur-dev") === "1");
-  const [scen, setScen] = useState(store.get("dameur-dev") === "1" ? store.get("dameur-scen") || "live" : "live");
-  const [raw, setRaw] = useState(false), [selHour, setSelHour] = useState(0);
+  const [bundle, setBundle] = useState(() => store.json(K.cache));
+  const [busy, setBusy] = useState(false), [offline, setOffline] = useState(false), [failed, setFailed] = useState(false);
+  const [prefs, setPrefsState] = useState(() => ({ night: false, big: false, custom: null, lead: 3, ...(store.json(K.prefs) || {}) }));
+  const [open, setOpen] = useState(false);
+  const [dev, setDev] = useState(store.get(K.dev) === "1");
+  const [scen, setScen] = useState("live"), [shift, setShift] = useState(0), [raw, setRaw] = useState(false);
+  const [selHour, setSelHour] = useState(0);
+  const [tick, setTick] = useState(0);
+  const [baseline, setBaseline] = useState(() => store.json(K.seen));
+  const [toast, setToast] = useState(null);
+  const prevSnap = useRef(null), hiddenAt = useRef(null);
+
+  const setPrefs = p => { setPrefsState(p); store.set(K.prefs, JSON.stringify(p)); };
+  useEffect(() => {
+    document.documentElement.classList.toggle("night", !!prefs.night);
+    document.documentElement.classList.toggle("big", !!prefs.big);
+  }, [prefs.night, prefs.big]);
 
   const load = async () => {
     setBusy(true);
-    try { setData({ ...(await fetchWeather()), at: new Date() }); setErr(null); }
-    catch (e) { setErr(e.message); }
+    try {
+      const b = await fetchAll();
+      setBundle(b); setOffline(false); setFailed(false);
+      store.set(K.cache, JSON.stringify(b));
+    } catch (e) { setOffline(true); setFailed(true); }
     setBusy(false);
   };
   useEffect(() => {
     load();
-    const id = setInterval(load, 10 * 60 * 1000);
-    const vis = () => document.visibilityState === "visible" && load();
+    const id = setInterval(() => { if (document.visibilityState === "visible") load(); }, REFRESH_MIN * 60e3);
+    const t = setInterval(() => setTick(x => x + 1), 30e3);
+    const vis = () => {
+      if (document.visibilityState === "hidden") { hiddenAt.current = Date.now(); return; }
+      if (hiddenAt.current && Date.now() - hiddenAt.current > 15 * 60e3) setBaseline(store.json(K.seen));
+      hiddenAt.current = null; setTick(x => x + 1); load();
+    };
+    const onl = () => load();
     document.addEventListener("visibilitychange", vis);
-    return () => { clearInterval(id); document.removeEventListener("visibilitychange", vis); };
+    window.addEventListener("online", onl);
+    return () => { clearInterval(id); clearInterval(t); document.removeEventListener("visibilitychange", vis); window.removeEventListener("online", onl); };
   }, []);
 
   const A = useMemo(() => {
-    if (!data) return null;
-    let d = data;
-    if (scen !== "live") {
-      const nowIdx = Math.max(0, d.hourly.time.indexOf(d.current.time.slice(0, 13) + ":00"));
-      d = simulate(d, scen, nowIdx);
-    }
-    return { ...analyze(d), cur: d.current, model: d.model };
-  }, [data, scen]);
+    if (!bundle || !bundle.main) return null;
+    try {
+      const nowKey = localKey(Date.now() + shift * 3600e3);
+      let b = bundle;
+      if (scen !== "live") {
+        const nowIdx = Math.max(0, b.main.hourly.time.indexOf(nowKey.slice(0, 13) + ":00"));
+        b = simulateBundle(b, scen, nowIdx);
+      }
+      return analyze(b, { nowKey, custom: prefs.custom, lead: prefs.lead, sim: scen !== "live" || shift !== 0 });
+    } catch (e) { console.error(e); return { error: e.message }; }
+  }, [bundle, scen, shift, prefs.custom, prefs.lead, Math.floor(tick / 10)]);
 
+  // Mémoriser ce que l'utilisateur a vu + avertir des changements pendant que la page est ouverte
+  useEffect(() => {
+    if (!A || A.error) return;
+    const s = A.snap;
+    if (!s.sim) store.set(K.seen, JSON.stringify(s));
+    const p = prevSnap.current;
+    if (p && p.sim === s.sim && bundle && bundle.fetchedAt !== p.fetchedAt) {
+      const d = diffSnap({ ...p, at: p.at - 11 * 60e3 }, s, A);
+      if (d && d.length) { setToast(d.slice(0, 2).map(x => x[1]).join(" ")); setTimeout(() => setToast(null), 8000); }
+    }
+    prevSnap.current = { ...s, fetchedAt: bundle && bundle.fetchedAt };
+  }, [A]);
+
+  const changes = A && !A.error ? diffSnap(baseline, A.snap, A) : null;
+  const fakeVisit = () => {
+    const nowKey = localKey(Date.now() + (shift - 6) * 3600e3);
+    let b = bundle;
+    if (scen !== "live") b = simulateBundle(b, scen, Math.max(0, b.main.hourly.time.indexOf(localKey(Date.now() + shift * 3600e3).slice(0, 13) + ":00")));
+    const old = analyze(b, { nowKey, custom: prefs.custom, lead: prefs.lead, sim: scen !== "live" || shift !== 0 }).snap;
+    // l'ancienne prévision voyait un peu moins de neige et une fin plus tôt, pour tester l'encadré
+    Object.keys(old.fc).forEach(k => { old.fc[k] = old.fc[k] * .6; });
+    if (old.activeEnd) old.activeEnd = addH(old.activeEnd, -2);
+    setBaseline({ ...old, at: Date.now() - 6 * 3600e3 }); setOpen(false);
+  };
+
+  const status = A && !A.error ? (A.openNow ? `🟢 Ouvert · ferme à ${hh(A.closeToday)}` : A.nextOpen ? `Fermé · ouvre ${A.W(A.nextOpen)}` : "Hors saison") : null;
   const head = html`<header>
     <div class="t"><h1>Dameur</h1><div class="sub">${SITE.name}</div></div>
-    <button class="iconbtn" onClick=${load} aria-label="Actualiser" style=${{ opacity: busy ? .4 : 1 }}>↻</button>
+    <button class=${"iconbtn" + (busy ? " spin" : "")} onClick=${load} aria-label="Actualiser"><span>↻</span></button>
     <button class="iconbtn" onClick=${() => setOpen(true)} aria-label="Réglages">⚙︎</button>
   </header>`;
-  const sheet = open && html`<${Settings} dev=${dev} setDev=${setDev} scen=${scen} setScen=${setScen} raw=${raw} setRaw=${setRaw} onClose=${() => setOpen(false)} />`;
+  const sheet = open ? html`<${Settings} prefs=${prefs} setPrefs=${setPrefs} dev=${dev} setDev=${setDev} scen=${scen} setScen=${setScen}
+    shift=${shift} setShift=${setShift} raw=${raw} setRaw=${setRaw} onFakeVisit=${fakeVisit} onClose=${() => setOpen(false)} />` : null;
 
-  if (!A) return html`${head}<div class="loading">${err ? "Impossible de charger la météo. Touche ↻ pour réessayer." : "Chargement de la météo…"}</div>${sheet}`;
+  if (!A) return html`${head}<div class="loading">${failed ? html`Impossible de charger la météo.<br/>Vérifie le réseau, puis touche ↻.` : "Chargement de la météo…"}</div>${sheet}`;
+  if (A.error) return html`${head}<div class="loading">Erreur dans les données : ${A.error}<br/>Touche ↻ pour réessayer.</div>${sheet}`;
 
-  const { cur, h, nowIdx, today } = A;
-  const [lc] = LVL[A.adviceLvl];
-  const hour = A.hours[selHour];
-  const humidColor = { humide: "var(--rain)", normal: "var(--good)", sec: "var(--snow)", aucune: "var(--ink3)" }[A.humid];
-  const humidTip = {
-    humide: "Neige lourde et collante : elle se compacte bien mais ralentit les tubes. Si ça regèle, elle devient de la glace — dame avant le regel.",
+  const { cur, W, plan, nowIdx, time } = A;
+  const age = Date.now() - (bundle.fetchedAt || 0);
+  const lc = plan ? LVL[plan.lvl].c : "var(--line)";
+  const PM = plan && plan.morning, PO = plan && plan.ops;
+  const hour = A.cells[clamp(selHour, 0, A.cells.length - 1)];
+  const wetColor = { humide: "var(--rain)", normal: "var(--good)", sec: "var(--snow)" };
+  const wetTip = {
+    humide: "Neige lourde et collante : elle ralentit les tubes. Ne la compacte pas détrempée ; si ça regèle, passe la fraise après.",
     normal: "Bonne neige pour compacter : une passe de dameuse tient bien.",
-    sec: "Neige sèche et poudreuse : elle se lie mal. Prévois plus de passes, ou laisse reposer entre deux passes pour qu'elle durcisse.",
-    aucune: "Le verdict s'affichera dès qu'il y aura de la neige.",
-  }[A.humid];
-  const todayTemps = h.temperature_2m.slice(A.di, A.di + 24);
+    sec: "Neige sèche : elle se lie mal. Prévois plus de passes et laisse-la reposer pour qu'elle durcisse.",
+  };
+  const [wxIc, wxName] = wxLabel(cur.code, cur.night);
+  const todayT = A.T.slice(A.mid, A.mid + 24);
+  const continueTxt = A.active
+    ? `Oui — ${A.active.type === "snow" ? "neige" : TYPE[A.active.type].name} jusqu'à ≈ ${A.active.openEnd ? "plus tard" : W(A.active.endKey)}`
+    : A.next ? `Pas maintenant — ${TYPE[A.next.type].name} prévue vers ${W(A.next.startKey)}`
+    : `Non — rien de prévu d'ici ${W(addH(A.nowKey.slice(0, 13) + ":00", 24))}`;
+  const sun = A.sunOf[A.today], sunT = A.sunOf[dayOf(addH(A.today + "T12:00", 24))];
+  const fabNow = A.twCat(cur.Tw);
 
   return html`
     ${head}
-    ${scen !== "live" && html`<div class="devbar">DEV · scénario inventé : ${SCENARIOS[scen]}</div>`}
-
-    <div class=${"card advice"} style=${{ borderColor: lc }}>
-      <div class="head"><span class="dot" style=${{ background: lc }}></span>${LVL[A.adviceLvl][1]} ${A.advice.title}</div>
-      <p>${A.advice.text}</p>
+    <div class="status">
+      ${status ? html`<span class="pill">${status}</span>` : null}
+      <span class="pill" style=${{ color: age > 30 * 60e3 ? "var(--warn)" : null }}>${offline ? "📴 hors ligne · " : ""}mis à jour ${ago(age)}</span>
     </div>
+    ${A.sim ? html`<div class="devbar">DEV · ${scen !== "live" ? `météo inventée : ${SCEN[scen].label}` : "météo réelle"}${shift ? ` · heure décalée de ${shift > 0 ? "+" : ""}${shift} h` : ""}</div>` : null}
+    ${offline ? html`<div class="warnbar">Pas de réseau : ce sont les dernières données gardées (${ago(age)}). La page se mettra à jour toute seule au retour du réseau.</div>` : null}
+    ${A.offSeason ? html`<div class="warnbar">Hors saison : les conseils supposent de la neige sur les pistes. Pour tester une journée d'hiver : ⚙︎ → DEV.</div>` : null}
 
-    ${A.alerts.length > 0 && html`<div class="card"><h2>À surveiller</h2>
-      ${A.alerts.map((x, k) => html`<div class="alert" key=${k} style=${{ boxShadow: `inset 3px 0 0 ${LVL[x.lvl][0]}` }}>
-        <div class="ic">${x.ic}</div><div><b>${x.t}</b><span>${x.s}</span></div></div>`)}
-    </div>`}
+    ${changes ? html`<div class="card changes">
+      <h2><span>Depuis ta dernière visite</span><span>${ago(A.snap.at - baseline.at)}</span></h2>
+      ${changes.length ? changes.map((x, j) => html`<div class="chg" key=${j}><span>${x[0]}</span><span>${x[1]}</span></div>`)
+        : html`<div class="muted">Rien d'important n'a changé.</div>`}
+      <button class="btn small" onClick=${() => setBaseline(A.snap)}>Vu</button>
+    </div>` : null}
+
+    ${plan ? html`<div class="card plan" style=${{ borderColor: lc }}>
+      <h2><span>Plan · ${plan.dayWord}</span><span>${plan.hours.typical ? "horaire type" : "ouvert"} ${pad(plan.hours.open)}h–${pad(plan.hours.close)}h</span></h2>
+      ${plan.lead ? html`<p class="lead"><b>${plan.lead}</b></p>` : null}
+      ${PM && !PM.missing ? html`<div class=${"sect" + (PM.past ? " past" : "")}>
+        <div class="sect-h">DAMAGE DU MATIN · ${hh(PM.startK)} → ${hh(PM.openK)}${PM.past ? " · fait" : ""}</div>
+        <div class="title"><${Dot} c=${LVL[PM.lvl].c} /><span>${PM.title}</span></div>
+        ${PM.past ? null : html`<ul>${PM.lines.map((l, j) => html`<li key=${j}>${l}</li>`)}</ul>`}
+      </div>` : null}
+      ${PO && !PO.missing ? html`<div class="sect">
+        <div class="sect-h">PENDANT LA JOURNÉE · ${hh(PO.openK)} → ${hh(PO.closeK)}</div>
+        ${(PO.shown || []).length ? PO.shown.map((e, j) => html`<div class="ev" key=${j}><span class="ic">${e.ic}</span><div><b>${e.t}</b><span class="s">${e.s}</span></div></div>`)
+          : html`<div class="ev"><span class="ic">✓</span><div><b>Journée stable</b><span class="s">Pas de retouche à prévoir à cause de la météo.</span></div></div>`}
+      </div>` : null}
+      ${PM && PM.missing ? html`<p class="faint" style=${{ marginTop: 10 }}>Prévisions pas encore disponibles pour ce jour-là.</p>` : null}
+      <${DayStrip} A=${A} />
+      ${plan.atOpen ? html`<div class="tile" style=${{ marginTop: 12 }}>
+        <div class="lab">À l'ouverture · ${W(plan.atOpen.key)}</div>
+        <b>${deg(plan.atOpen.T)}</b> · neige ${plan.atOpen.wet === "normal" ? "normale" : plan.atOpen.wet === "sec" ? "sèche" : "humide"} · glisse ${plan.atOpen.speed.toLowerCase()}${plan.atOpen.pt ? ` · ${TYPE[plan.atOpen.pt].ic} ${TYPE[plan.atOpen.pt].name}` : ""}
+      </div>` : null}
+      ${plan.next && !plan.next.missing ? html`<div class="sect">
+        <div class="sect-h">${plan.nextWord.toUpperCase()} MATIN · ${hh(plan.next.startK)} → ${hh(plan.next.openK)}</div>
+        <div class="title small"><${Dot} c=${LVL[plan.next.lvl].c} /><span>${plan.next.title}</span></div>
+        <ul>${plan.next.lines.slice(0, 2).map((l, j) => html`<li key=${j}>${l}</li>`)}</ul>
+      </div>` : null}
+    </div>` : html`<div class="card"><h2>Plan</h2><p class="muted">Aucune journée d'ouverture dans les prochains jours.</p></div>`}
+
+    ${A.alerts.length ? html`<div class="card"><h2>À surveiller</h2>
+      ${A.alerts.map((x, j) => html`<div class="alert" key=${j} style=${{ boxShadow: `inset 3px 0 0 ${LVL[x.lvl].c}` }}>
+        <div class="ic">${x.ic}</div><div style=${{ minWidth: 0 }}><b>${x.t}</b><span>${x.s}</span>
+        ${x.more ? html`<details><summary>Lire l'avis</summary>${x.more}</details>` : null}</div></div>`)}
+    </div>` : null}
 
     <div class="card">
-      <h2>Maintenant</h2>
-      <div style=${{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <div class="big">${deg(cur.temperature_2m)}</div>
-        <div class="faint">ressenti ${deg(cur.apparent_temperature)}</div>
+      <h2>En bref</h2>
+      <p class="muted">${A.brief.join(" ")}</p>
+    </div>
+
+    <div class="card">
+      <h2><span>Maintenant</span><span>${wxIc} ${wxName}</span></h2>
+      <div style=${{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+        <div class="big">${deg(cur.T)}</div>
+        <div class="faint">ressenti ${deg(cur.app)}${A.corrInfo && Math.abs(A.corrInfo.now) >= 0.3 ? html`<br/>corrigé ${sgn(A.corrInfo.now)}° avec les stations` : null}</div>
       </div>
       <div class="row" style=${{ marginTop: 12 }}>
-        <div class="tile"><div class="lab">Aujourd'hui</div>${deg(Math.min(...todayTemps))} / ${deg(Math.max(...todayTemps))}</div>
-        <div class="tile"><div class="lab">Vent ${dir(h.wind_direction_10m[nowIdx])}</div>${Math.round(n0(cur.wind_speed_10m))} km/h <span class="faint">raf. ${Math.round(n0(cur.wind_gusts_10m))}</span></div>
+        <div class="tile"><div class="lab">Aujourd'hui</div>${deg0(Math.min(...todayT))} / ${deg0(Math.max(...todayT))}</div>
+        <div class="tile"><div class="lab">Vent ${DIRS[dirIdx(cur.dir)]} ${ARROWS[dirIdx(cur.dir)]}</div>${Math.round(n0(cur.wind))} km/h <span class="faint">raf. ${Math.round(n0(cur.gust))}</span></div>
       </div>
       <div class="row" style=${{ marginTop: 10 }}>
-        <div class="tile"><div class="lab">Humidité de l'air</div>${cur.relative_humidity_2m} %</div>
-        <div class="tile"><div class="lab">Neige au sol</div>${fr(A.depth, 0)} cm</div>
+        <div class="tile"><div class="lab">Humidité de l'air</div>${cur.RH} %</div>
+        <div class="tile"><div class="lab">Temp. humide</div>${deg(cur.Tw)}</div>
       </div>
     </div>
 
     <div class="card">
       <h2>Neige tombée</h2>
       <div class="row">
-        <div class="tile"><div class="lab">Hier soir (18h → minuit)</div><div class="mid">${fr(A.snowEve)} <span class="faint">cm</span></div></div>
-        <div class="tile"><div class="lab">Aujourd'hui (minuit → ${hh(h.time[nowIdx])})</div><div class="mid">${fr(A.snowToday)} <span class="faint">cm</span></div></div>
+        <div class="tile"><div class="lab">Hier soir · 18h → minuit</div><div class="mid">${fr(A.snowEve)} <span class="faint">cm</span></div></div>
+        <div class="tile"><div class="lab">Aujourd'hui · minuit → ${A.nowKey.slice(11, 16).replace(":", "h")}</div><div class="mid">${fr(A.snowToday)} <span class="faint">cm</span></div></div>
       </div>
-      <div class="faint" style=${{ marginTop: 8 }}>Total depuis 18h hier : <b class="muted">${fr(A.snowEve + A.snowToday)} cm</b>${A.rainSince >= 0.1 ? html` · pluie ${fr(A.rainSince)} mm` : ""}</div>
-      <div style=${{ marginTop: 12 }}>
-        <div class="tile">
-          <div class="lab">Est-ce que ça continue ?</div>
-          <div style=${{ fontWeight: 650, fontSize: "1.1rem" }}>
-            ${A.active ? `Oui — ${TYPE[A.active.type][1].toLowerCase()} jusqu'à ${A.active.openEnd ? "au-delà des prévisions" : dayWord(A.active.end, today) + hh(A.active.end)}`
-              : A.next ? `Non pour l'instant — ${TYPE[A.next.type][1].toLowerCase()} prévue vers ${dayWord(A.next.start, today)}${hh(A.next.start)}`
-              : "Non — rien de prévu dans les 24 prochaines heures"}
-          </div>
-          ${A.active && A.active.left >= 0.1 && html`<div class="muted">Encore environ ${fr(A.active.left)} cm à venir.</div>`}
-          ${!A.active && A.next && A.next.snow >= 0.1 && html`<div class="muted">Environ ${fr(A.next.snow)} cm prévus.</div>`}
-        </div>
+      <div class="faint" style=${{ marginTop: 8 }}>Total depuis 18h hier : <b class="muted">${fr(A.snowEve + A.snowToday)} cm</b>${A.rhoSince ? ` de neige ${densWord(A.rhoSince)}` : ""} (${fr(A.sweSince)} mm d'eau)${A.rainSince >= 0.1 ? ` · pluie ${fr(A.rainSince)} mm` : ""}</div>
+      <div class="tile" style=${{ marginTop: 12 }}>
+        <div class="lab">Est-ce que ça continue ?</div>
+        <div style=${{ fontWeight: 700, fontSize: "1.08rem" }}>${continueTxt}</div>
+        ${A.active && A.active.left >= 0.1 ? html`<div class="muted">Encore ≈ ${fr(A.active.left)} cm à venir.</div>` : null}
+        ${!A.active && A.next && A.next.snow >= 0.1 ? html`<div class="muted">≈ ${fr(A.next.snow)} cm prévus.</div>` : null}
+        ${A.models && (A.active || A.next) ? html`<div class="faint" style=${{ marginTop: 6 }}>Fin selon les modèles : ${A.models.map(x => `${x.name} ${x.endKey ? W(x.endKey) : "—"}`).join(" · ")}</div>` : null}
+        ${A.conf ? html`<div style=${{ marginTop: 8 }}><span class="pill"><${Dot} c=${LVL[A.conf.lvl].c} size=${9} /> Fiabilité ${A.conf.name}</span></div>` : null}
       </div>
-      ${A.eps.length > 0 && html`<div style=${{ marginTop: 10 }}>${A.eps.filter(e => e.a - nowIdx <= 24).map(e => html`<${Episode} key=${e.a} e=${e} today=${today} />`)}</div>`}
+      ${A.eps.filter(e => e.a - nowIdx <= 36).length ? html`<div style=${{ marginTop: 8 }}>${A.eps.filter(e => e.a - nowIdx <= 36).map(e => html`<${Episode} key=${e.a} e=${e} W=${W} time=${time} />`)}</div>` : null}
+      <div class="faint" style=${{ marginTop: 8 }}>Les cm tiennent compte de la température : la neige froide est plus légère et plus épaisse.</div>
     </div>
 
     <div class="card">
-      <h2>Température — hier 18h → +${AHEAD} h</h2>
-      <${TempChart} A=${A} />
-    </div>
-
-    <div class="card">
-      <h2>État de la neige</h2>
+      <h2>Sur la piste</h2>
       <div style=${{ display: "flex", alignItems: "center", gap: 10 }}>
-        <span class="dot" style=${{ background: humidColor, width: 14, height: 14 }}></span>
-        <span class="mid">${{ humide: "C'est humide", sec: "C'est sec", normal: "C'est normal", aucune: "Pas de neige" }[A.humid]}</span>
+        <${Dot} c=${wetColor[A.wNow.lvl]} size=${16} />
+        <span class="mid">${{ humide: "C'est humide", sec: "C'est sec", normal: "C'est normal" }[A.wNow.lvl]}</span>
       </div>
-      <div class="gauge">
-        ${[0, 1, 2].map(k => html`<div key=${k} style=${{ background: k === { sec: 0, normal: 1, humide: 2 }[A.humid] ? humidColor : "" }}></div>`)}
+      <div class="gbar">
+        <div class=${A.wNow.lvl === "sec" ? "on" : ""} style=${{ background: "var(--snow)" }}></div>
+        <div class=${A.wNow.lvl === "normal" ? "on" : ""} style=${{ background: "var(--good)" }}></div>
+        <div class=${A.wNow.lvl === "humide" ? "on" : ""} style=${{ background: "var(--rain)" }}></div>
+        <span class="gmark" style=${{ left: clamp(A.wNow.s, 2, 98) + "%" }}></span>
       </div>
-      <div class="gauge-lab"><span>Sec</span><span>Normal</span><span>Humide</span></div>
-      <p class="muted" style=${{ margin: "10px 0 0" }}>${A.humidWhy}</p>
-      <p class="muted" style=${{ margin: "6px 0 0" }}>${humidTip}</p>
+      <div class="glab"><span>Sec</span><span>Normal</span><span>Humide</span></div>
+      <p class="muted" style=${{ marginTop: 10 }}>${wetTip[A.wNow.lvl]}</p>
+      <div class="tile" style=${{ marginTop: 12 }}>
+        <div class="lab">Surface probable</div>
+        <b>${A.sNow.name}</b>
+        <div class="muted" style=${{ fontSize: ".9rem", marginTop: 2 }}>${A.sNow.tip}</div>
+        <div class="lab" style=${{ marginTop: 10 }}>Glisse des tubes</div>
+        <div class="speed">${A.SPEEDS.map((s, j) => html`<div key=${j} class=${A.sNow.speed === j ? "on" : ""}>${s}</div>`)}</div>
+      </div>
+      <details class="why"><summary>Pourquoi ? (calcul)</summary>
+        ${A.wNow.why.map((w, j) => html`<div key=${j}><span>${w[0]}</span><span>${w[1] > 0 ? "+" : ""}${Math.round(w[1])}</span></div>`)}
+        <div><span><b>Indice (0 = sec, 100 = humide)</b></span><span><b>${Math.round(A.wNow.s)}</b></span></div>
+      </details>
     </div>
 
     <div class="card">
-      <h2>Quand damer — prochaines ${AHEAD} h</h2>
+      <h2>Température · hier 18h → +${AHEAD} h</h2>
+      <${Chart} A=${A} />
+    </div>
+
+    <div class="card">
+      <h2>Heure par heure · damage</h2>
       <div class="hours">
-        ${A.hours.map((x, k) => html`<button key=${k} class=${"hour" + (k === selHour ? " sel" : "")} onClick=${() => setSelHour(k)}
-          style=${{ background: `color-mix(in srgb, ${LVL[x.lvl][0]} 22%, var(--card2))` }}>
-          <div class="h">${hh(x.t)}</div><div class="v">${fr(x.temp, 0)}°</div>
-          <div class="i">${x.pt ? TYPE[x.pt][0] : LVL[x.lvl][1]}</div></button>`)}
+        ${A.cells.map((x, k) => html`<button key=${k} class=${"hour" + (k === selHour ? " sel" : "") + (x.morning ? " morning" : x.open ? " open" : "")} onClick=${() => setSelHour(k)}
+          style=${{ background: `linear-gradient(rgba(${LVL[x.lvl].rgb},.28), rgba(${LVL[x.lvl].rgb},.28)), var(--card2)` }} aria-label=${`${hh(x.key)} ${LVL[x.lvl].name}`}>
+          ${x.pass ? html`<span class="star">↻</span>` : null}
+          <div class="h">${hh(x.key)}</div><div class="v">${deg0(x.t)}</div>
+          <div class="i">${x.pt ? TYPE[x.pt].ic : LVL[x.lvl].ic}</div></button>`)}
       </div>
-      ${hour && html`<div class="tile" style=${{ marginTop: 10 }}>
+      ${hour ? html`<div class="tile" style=${{ marginTop: 10 }}>
         <div style=${{ display: "flex", alignItems: "center", gap: 8, fontWeight: 650 }}>
-          <span class="dot" style=${{ background: LVL[hour.lvl][0] }}></span>${dayWord(hour.t, today)}${hh(hour.t)} · ${LVL[hour.lvl][2]}</div>
+          <${Dot} c=${LVL[hour.lvl].c} />${W(hour.key)}–${hh(hour.endKey)} · ${LVL[hour.lvl].name}${hour.morning ? " · damage du matin" : hour.open ? " · ouvert" : ""}${hour.pass ? " · ↻ repasser" : ""}</div>
         <div class="muted" style=${{ marginTop: 4 }}>${hour.why.join(" · ")}</div>
-      </div>`}
+        <div class="faint" style=${{ marginTop: 4 }}>${hour.s >= 0.05 ? `neige ${fr(hour.s)} cm · ` : ""}${hour.l >= 0.05 ? `pluie ${fr(hour.l)} mm · ` : ""}rafales ${Math.round(hour.g)} km/h · temp. humide ${deg(A.Tw[hour.k])}</div>
+      </div>` : null}
       <div class="legend" style=${{ marginTop: 10 }}>
         <span><i style=${{ background: "var(--good)" }}></i>✓ Bon</span>
         <span><i style=${{ background: "var(--warn)" }}></i>~ Moyen</span>
         <span><i style=${{ background: "var(--bad)" }}></i>✕ Mauvais</span>
+        <span><i style=${{ background: "var(--snow)", height: 3 }}></i>damage du matin</span>
+        <span><i style=${{ background: "var(--ink2)", height: 3 }}></i>ouvert</span>
+        <span>↻ repasser</span>
       </div>
+      <div class="faint" style=${{ marginTop: 6 }}>Touche une heure pour voir pourquoi. Couleur = conditions pour damer.</div>
     </div>
 
     <div class="row" style=${{ marginTop: 0 }}>
       <div class="card">
         <h2>Fabrication</h2>
-        <div class="mid">${deg(A.tw)}</div>
-        <div class="faint">température humide</div>
-        <div style=${{ marginTop: 8, fontWeight: 600, color: A.tw <= -2.5 ? "var(--good)" : A.tw <= -1 ? "var(--warn)" : "var(--bad)" }}>
-          ${A.tw <= -2.5 ? "✓ Possible" : A.tw <= -1 ? "~ Limite" : "✕ Impossible"}</div>
-        <div class="faint">${A.snowmakeHours} h possibles d'ici ${AHEAD} h</div>
+        <div class="mid">${deg(cur.Tw)}</div>
+        <div class="faint">temp. humide</div>
+        <div style=${{ marginTop: 8, fontWeight: 650, color: LVL[fabNow.lvl].c }}>${LVL[fabNow.lvl].ic} ${fabNow.name}</div>
+        <div class="faint" style=${{ marginTop: 4 }}>${A.fab.hours} h possibles d'ici 24 h${A.fab.run ? html`<br/>Meilleur : ${W(A.fab.run.from)} → ${W(A.fab.run.to)}` : null}</div>
       </div>
       <div class="card">
         <h2>Soleil</h2>
-        ${A.sun ? html`<div class="muted">☀️ lever ${A.sun.rise.slice(11)}</div><div class="muted" style=${{ marginTop: 4 }}>🌙 coucher ${A.sun.set.slice(11)}</div>` : "—"}
-        <div class="faint" style=${{ marginTop: 8 }}>Lumières des pistes après le coucher.</div>
+        ${sun ? html`<div class="muted">☀️ lever ${hh(sun.rise)}${sun.rise.slice(14, 16)}</div><div class="muted" style=${{ marginTop: 4 }}>🌙 coucher ${hh(sun.set)}${sun.set.slice(14, 16)}</div>` : "—"}
+        ${sun && sunT ? html`<div class="faint" style=${{ marginTop: 8 }}>Nuit noire de ${hh(sun.set)}${sun.set.slice(14, 16)} à ${hh(sunT.rise)}${sunT.rise.slice(14, 16)} : lumières des pistes.</div>` : null}
       </div>
     </div>
 
-    ${dev && raw && html`<${RawTable} A=${A} />`}
+    <div class="card">
+      <h2>D'où viennent les chiffres</h2>
+      <p class="muted" style=${{ fontSize: ".9rem" }}>Lieu : ${SITE.addr}. Prévision : ${bundle.main.model === "gem" ? "modèle d'Environnement Canada (grille de 2,5 km)" : "meilleur modèle disponible"} via Open-Meteo.</p>
+      ${A.corrInfo ? html`<p class="muted" style=${{ fontSize: ".9rem", marginTop: 8 }}>Température corrigée de <b>${sgn(A.corrInfo.b0)}°</b> grâce aux mesures réelles de ${W(A.corrInfo.key)} :</p>
+        <table class="mt" style=${{ marginTop: 4 }}><thead><tr><th>Station</th><th>Mesuré</th><th>Modèle</th><th>Écart</th></tr></thead><tbody>
+        ${A.corrInfo.stations.map(s => html`<tr key=${s.name}><td>${s.name} <span class="faint">${Math.round(s.dist)} km</span></td><td class="n">${deg(s.obs)}</td><td class="n">${deg(s.model)}</td><td class="n">${sgn(s.bias)}°</td></tr>`)}
+        </tbody></table>
+        <p class="faint" style=${{ marginTop: 4 }}>L'écart s'estompe dans les heures suivantes.</p>`
+        : html`<p class="faint" style=${{ marginTop: 8 }}>${A.sim ? "Mode DEV : pas de correction." : "Mesures des stations indisponibles : température du modèle seul."}</p>`}
+      ${A.models ? html`<p class="muted" style=${{ fontSize: ".9rem", marginTop: 12 }}>4 modèles pour les 24 prochaines heures :</p>
+        <table class="mt" style=${{ marginTop: 4 }}><thead><tr><th>Modèle</th><th>Neige</th><th>Fin</th><th>Min.</th></tr></thead><tbody>
+        ${A.models.map(x => html`<tr key=${x.id}><td>${x.name} <span class="faint">${x.src}</span></td><td class="n">${fr(x.snow)} cm</td><td class="n">${x.endKey ? W(x.endKey) : "—"}</td><td class="n">${deg0(x.minT)}</td></tr>`)}
+        </tbody></table>
+        ${A.conf ? html`<p class="faint" style=${{ marginTop: 4 }}>${A.conf.text}</p>` : null}` : null}
+      <p class="faint" style=${{ marginTop: 12 }}>Avertissements : Environnement Canada${A.sim ? " (inventés en mode DEV)" : bundle.ok && bundle.ok.alerts === false ? " — indisponible pour l'instant" : A.alerts.some(x => x.ic === "📢") ? "" : " — aucun en vigueur"}.
+        Horaire : ${prefs.custom ? "personnalisé" : `officiel 2026-2027 des Glissades (début de saison estimé au ${+SEASON_START.slice(8)} novembre)`}.</p>
+    </div>
+
+    ${dev && raw ? html`<${RawTable} A=${A} />` : null}
 
     <footer>
-      Mis à jour à ${data.at.toLocaleTimeString("fr-CA", { hour: "2-digit", minute: "2-digit", timeZone: "America/Toronto" })} · se rafraîchit toutes les 10 min<br/>
-      Source : ${A.model} via Open-Meteo, grille de 2,5 km. C'est une prévision, pas un thermomètre sur place.
+      Se met à jour toute seule toutes les ${REFRESH_MIN} min et à chaque ouverture.<br/>
+      C'est une prévision, pas un thermomètre sur la piste.
     </footer>
+    ${toast ? html`<div class="toast" role="status" onClick=${() => setToast(null)}>🔔 ${toast}</div>` : null}
     ${sheet}
   `;
 }
