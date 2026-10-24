@@ -647,11 +647,11 @@ function analyze(b, o) {
     let thaw = null; for (let k = i; k >= Math.max(0, i - 47); k--) if (T[k] > 0.5 || (liq(k) >= 0.2 && T0[k] > 0)) { thaw = k; break; }
     const frozen = thaw != null ? S(k => (T[k] < -1 ? 1 : 0), thaw + 1, i) : 0;
     const raining = ptype[i] === "rain" || ptype[i] === "mix";
-    if (ice) return { name: "Glacée (verglas)", speed: 3, tip: "Couloirs glacés : fraiser, et surveiller la vitesse dans la zone d'arrêt." };
+    if (ice) return { name: "Glacée (verglas)", speed: 3, tip: "Couloirs glacés : passe le tiller, et surveille la vitesse dans la zone d'arrêt." };
     if (raining || Tv > 0.5 || wi.s > 78) return { name: "Mouillée et molle", speed: 0, tip: "Laisse égoutter : compacter de la neige détrempée la rend dure comme du béton au regel." };
     if (fresh >= 10) return { name: `Neige fraîche épaisse (${fr(fresh, 0)} cm)`, speed: 0, tip: "Beaucoup de neige à compacter : prévois plusieurs passes." };
     if (fresh >= 3) return { name: `Neige fraîche (${fr(fresh, 0)} cm)`, speed: 1, tip: "Une passe pour compacter la neige fraîche." };
-    if (thaw != null && frozen >= 3) return { name: `Croûte regelée (dégel ${W(time[thaw])})`, speed: 2, tip: "Passe la fraise pour casser la croûte, sinon les tubes vont très vite." };
+    if (thaw != null && frozen >= 3) return { name: `Croûte regelée (dégel ${W(time[thaw])})`, speed: 2, tip: "Passe le tiller pour casser la croûte, sinon les tubes vont très vite." };
     if (wetBulb(Tv, RH[i]) <= -10) return { name: "Dure et sèche", speed: 2, tip: "Neige froide : glisse rapide, surveille le bas des pistes." };
     return { name: "Compacte", speed: 1, tip: "Surface normale." };
   }
@@ -724,14 +724,14 @@ function analyze(b, o) {
     const lines = []; let lvl = "good", title;
     if (wetH.length) {
       lvl = "bad"; title = wetH.some(x => x.pt === "ice") ? "Verglas pendant le damage" : "Pluie pendant le damage";
-      lines.push("Neige lourde et détrempée : ne la compacte pas, attends qu'elle égoutte, puis fraise après le regel.");
+      lines.push("Neige lourde et détrempée : ne la compacte pas, attends qu'elle égoutte, puis passe le tiller après le regel.");
     } else if (during >= 2) {
       lvl = "warn"; title = inProgress ? `Il neige pendant le damage (+${fr(during, 0)} cm d'ici ${hh(openK)})` : `Il neigera pendant le damage (+${fr(during, 0)} cm)`;
       lines.push(`Une première passe dès ${hh(startK)}, puis une dernière juste avant ${hh(openK)}.`);
     } else if (sf.speed === 3) { lvl = "bad"; title = "Couloirs glacés"; lines.push(sf.tip); }
     else if (before >= 10) { lvl = "warn"; title = `${fr(before, 0)} cm de neige à compacter`; lines.push("Grosse quantité : prévois plusieurs passes et commence tôt."); }
     else if (before >= 3) { title = `${fr(before, 0)} cm de neige fraîche à compacter`; lines.push("Une passe pour compacter : la neige va bien tenir."); }
-    else if (/Croûte/.test(sf.name)) { lvl = "warn"; title = "Croûte regelée : passe la fraise"; lines.push(sf.tip); }
+    else if (/Croûte/.test(sf.name)) { lvl = "warn"; title = "Croûte regelée : passe le tiller"; lines.push(sf.tip); }
     else if (tA > 0.5 || sf.speed === 0) { lvl = "warn"; title = "Neige molle ce matin"; lines.push("Évite de compacter la neige détrempée : elle durcira en glace au prochain regel."); }
     else { title = "Damage de routine"; lines.push("Pas de neige fraîche ni de croûte à prévoir."); }
     lines.push(`${deg0(tA)} à ${hh(startK)} → ${deg0(tZ)} à ${hh(openK)}${tZ > tA + 1.5 ? ", ça se réchauffe" : tZ < tA - 1 ? ", ça refroidit" : ""}.`);
@@ -777,7 +777,7 @@ function analyze(b, o) {
       for (let k = Math.max(lastWarm + 1, iO + 1); k <= Math.min(N - 1, iC + 12); k++) if (T[k] <= -2) {
         const evening = k > iC;
         ev.push({ key: time[k], ic: "🧊", lvl: "warn", t: `Regel ${evening ? "ce soir " : ""}vers ${hh(time[k])}`,
-          s: evening ? "Les ornières vont geler : prévois la fraise demain matin." : "La neige mouillée durcit : les ornières gèlent, passe la fraise dès que possible." });
+          s: evening ? "Les ornières vont geler : prévois le tiller demain matin." : "La neige mouillée durcit : les ornières gèlent, passe le tiller dès que possible." });
         break;
       }
     }
@@ -832,7 +832,7 @@ function analyze(b, o) {
   if (ice) alerts.push({ ic: "🧊", lvl: "bad", t: "Pluie verglaçante", s: `${ice.status === "done" ? "Tombée" : ice.status === "now" ? "En cours" : "Prévue"} de ${W(ice.startKey)} à ${W(ice.endKey)}. Couloirs glacés : prudence avec la dameuse dans les pentes.` });
   const inPlan = ic => !!(plan && plan.ops && (plan.ops.shown || []).some(e => e.ic === ic));
   if (freezeAt && !(plan && plan.ops && (plan.ops.shown || []).some(e => e.ic === "🧊" && e.key === freezeAt))) alerts.push({ ic: "🧊", lvl: "bad", t: `Regel vers ${W(freezeAt)}`,
-    s: "La neige mouillée va durcir. Ne compacte pas la neige détrempée juste avant : laisse-la égoutter, puis passe la fraise après le regel pour casser la croûte. Sinon : couloirs glacés et tubes très rapides." });
+    s: "La neige mouillée va durcir. Ne compacte pas la neige détrempée juste avant : laisse-la égoutter, puis passe le tiller après le regel pour casser la croûte. Sinon : couloirs glacés et tubes très rapides." });
   if (cur.T < 0) {
     let mx = -99, mk = null;
     for (let k = nowIdx + 1; k <= Math.min(N - 1, nowIdx + 24); k++) if (T[k] > mx) { mx = T[k]; mk = time[k]; }
@@ -882,7 +882,7 @@ function analyze(b, o) {
   if (gMax >= 30) brief.push(`Rafales jusqu'à ${Math.round(gMax)} km/h vers ${W(gAt)}.`);
   if (plan && plan.morning && !plan.morning.missing) {
     const mm = plan.morning.past ? plan.next : plan.morning;
-    if (mm && !mm.missing) brief.push(`Damage du matin${plan.morning.past ? ` (${plan.nextWord})` : ""}, ${hh(mm.startK)}–${hh(mm.openK)} : ${mm.title.charAt(0).toLowerCase() + mm.title.slice(1)}.`);
+    if (mm && !mm.missing) brief.push(`Damage du matin${plan.morning.past ? ` ${plan.nextWord}` : ""} (${hh(mm.startK)}–${hh(mm.openK)}) : ${(mm.title.charAt(0).toLowerCase() + mm.title.slice(1)).replace(" : ", ", ")}.`);
   }
   if (plan && plan.atOpen) brief.push(`À l'ouverture (${W(plan.atOpen.key)}) : ${deg0(plan.atOpen.T)}, neige ${plan.atOpen.wet === "normal" ? "normale" : plan.atOpen.wet === "sec" ? "sèche" : "humide"}, glisse ${plan.atOpen.speed.toLowerCase()}.`);
 
@@ -1237,7 +1237,7 @@ function App() {
   const hour = A.cells[clamp(selHour, 0, A.cells.length - 1)];
   const wetColor = { humide: "var(--rain)", normal: "var(--good)", sec: "var(--snow)" };
   const wetTip = {
-    humide: "Neige lourde et collante : elle ralentit les tubes. Ne la compacte pas détrempée ; si ça regèle, passe la fraise après.",
+    humide: "Neige lourde et collante : elle ralentit les tubes. Ne la compacte pas détrempée ; si ça regèle, passe le tiller après.",
     normal: "Bonne neige pour compacter : une passe de dameuse tient bien.",
     sec: "Neige sèche : elle se lie mal. Prévois plus de passes et laisse-la reposer pour qu'elle durcisse.",
   };
